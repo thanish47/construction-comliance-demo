@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPTS | Global Project Tracking System</title>
+
+    <!-- Google Fonts - Montserrat as Avenir Roman alternative -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.7;
+            font-weight: 400;
+            color: #666;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 100vw;
+        }
+
+        /* Header Styles */
+        header {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden;
+            /* Neomorphism - subtle soft shadow */
+            box-shadow:
+                0 8px 16px rgba(0, 0, 0, 0.15),
+                0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-top {
+            /* Neomorphism - soft background */
+            background: linear-gradient(135deg, #d8e8ce 0%, #a8c29e 100%);
+            padding: 6px 15px;
+            display: none; /* Hidden on mobile, shown on desktop */
+            box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .header-tagline {
+            font-size: 13px;
+            color: #4a7c59;
+            font-weight: 600;
+        }
+
+        .header-tagline em {
+            color: #558b2f;
+            font-weight: 700;
+        }
+
+        .header-nav {
+            /* Neomorphism - soft green background */
+            background: #8ea94e;
+            padding: 0 15px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .header-content {
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 93px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .logo img {
+            max-width: 200px;
+            height: auto;
+            display: block;
+        }
+
+        .nav-menu {
+            height: 100%;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            height: 100%;
+            margin: 0;
+            align-items: center;
+        }
+
+        .nav-menu ul li {
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            height: 100%;
+            /* Neomorphism - subtle raised effect */
+            background: #8ea94e;
+        }
+
+        .nav-menu a {
+            /* Neomorphism - dark text */
+            color: #1b5e20;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 20px;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #2e7d32;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 10px;
+            z-index: 1000;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            /* Neomorphism - dark green bars */
+            background-color: #1b5e20;
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+            box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Main Content Area */
+        main {
+            position: relative;
+            flex: 1;
+            /* Neomorphism - soft neutral background */
+            /* background: linear-gradient(135deg, #e7f1d0 0%, #a7c66f 100%); */
+            /* background-image: url('background-original.jpg'); */
+            /* background-image: url('bg_new.jpg'); */
+            /* background-image: url('bg_new_2.jpg'); */
+            /* background-image: url('bg_new_3.jpg'); */
+            background-image: url('bg_new_3.jpg');
+            /* background-image: url('bg_new_3.webp'); */
+            /* Note: Replace with background.webp after conversion using tools like:
+               - cwebp background-original.jpg -o background.webp
+               - Online converters: cloudconvert.com, convertio.co
+            */
+            padding: 50px 20px;
+            display: flex;
+            align-items: center;
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .content-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .welcome-box {
+            /* Glassmorphism - frosted glass effect */
+            background: rgba(200, 220, 190, 0.25);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px 30px;
+            max-width: 500px;
+            width: calc(100% - 20px);
+            border-radius: 20px;
+            /* Glassmorphism - glass border and shadow */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 8px 32px 0 rgba(31, 38, 135, 0.15),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4);
+        }
+
+        .welcome-label {
+            /* Glassmorphism - enhanced contrast for glass background */
+            color: #3d5a28;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 15px;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-shadow:
+                1px 1px 3px rgba(255, 255, 255, 0.9),
+                0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        .login-form-box {
+            padding: 0;
+            width: 100%;
+        }
+
+        .welcome-heading {
+            font-size: 54px;
+            /* Glassmorphism - darker text for better glass contrast */
+            color: #1b5e20;
+            font-weight: 700;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            /* Glassmorphism - glowing text effect */
+            text-shadow:
+                2px 2px 6px rgba(255, 255, 255, 0.9),
+                0 0 12px rgba(255, 255, 255, 0.6),
+                -1px -1px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        .login-form {
+            margin: 25px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            /* Glassmorphism - enhanced contrast for glass background */
+            color: #2d4a1f;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            text-shadow:
+                1px 1px 2px rgba(255, 255, 255, 0.8),
+                0 0 6px rgba(255, 255, 255, 0.4);
+        }
+
+        .form-group input {
+            width: 100%;
+            max-width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 12px;
+            /* Glassmorphism - frosted glass input */
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: #1b5e20;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.08),
+                inset 0 1px 1px rgba(255, 255, 255, 0.6);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            /* Glassmorphism - enhanced glass on focus */
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow:
+                0 4px 20px rgba(85, 139, 47, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.7),
+                0 0 0 3px rgba(142, 169, 78, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: #4a7c59;
+            opacity: 0.8;
+        }
+
+        .login-button {
+            width: 100%;
+            max-width: 100%;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: 'Montserrat', sans-serif;
+            /* Glassmorphism - frosted glass button */
+            color: #ffffff;
+            background: rgba(142, 169, 78, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+            box-shadow:
+                0 8px 24px rgba(0, 0, 0, 0.15),
+                inset 0 1px 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .login-button:hover {
+            /* Glassmorphism - enhanced glass on hover */
+            background: rgba(142, 169, 78, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow:
+                0 12px 32px rgba(0, 0, 0, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+            /* Glassmorphism - pressed glass effect */
+            background: rgba(142, 169, 78, 0.8);
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.15),
+                inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            /* Glassmorphism - frosted glass link */
+            color: #2d4a1f;
+            font-size: 14px;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.1),
+                inset 0 1px 1px rgba(255, 255, 255, 0.5);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
+        }
+
+        .forgot-password a:hover {
+            /* Glassmorphism - enhanced glass on hover */
+            background: rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow:
+                0 6px 20px rgba(0, 0, 0, 0.15),
+                inset 0 1px 1px rgba(255, 255, 255, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .forgot-password a:active {
+            transform: translateY(0);
+            /* Glassmorphism - pressed glass effect */
+            background: rgba(255, 255, 255, 0.35);
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.1),
+                inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-description {
+            /* Neomorphism - darker text */
+            color: #4a7c59;
+            font-size: 16px;
+            line-height: 1.6;
+            font-weight: 500;
+        }
+
+        /* Pill-style Footer Text positioned on background */
+        .footer-pills-container {
+            position: absolute;
+            bottom: 25px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            z-index: 5;
+        }
+
+        .footer-pill {
+            /* Glassmorphism pill style */
+            background: rgba(142, 169, 78, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #1b5e20;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.15),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4);
+            word-wrap: break-word;
+        }
+
+        /* Responsive Design */
+        @media screen and (min-width: 981px) {
+            .header-top {
+                display: block;
+                padding: 6px 25px;
+            }
+
+            .header-nav {
+                padding: 0 25px;
+            }
+
+            .logo img {
+                max-width: 200px;
+            }
+
+            .welcome-box {
+                padding: 50px 45px;
+                max-width: 520px;
+            }
+
+            main {
+                padding: 50px 25px;
+            }
+        }
+
+        @media screen and (min-width: 768px) and (max-width: 980px) {
+            .header-nav {
+                padding: 0 20px;
+            }
+
+            .welcome-box {
+                padding: 40px 35px;
+                max-width: 480px;
+            }
+
+            .welcome-heading {
+                font-size: 48px;
+            }
+
+            main {
+                padding: 40px 20px;
+            }
+
+            .footer-pills-container {
+                padding: 0 20px;
+                bottom: 20px;
+            }
+        }
+
+        @media screen and (max-width: 767px) {
+            main {
+                padding: 25px 10px;
+            }
+
+            .content-container {
+                padding: 0 5px;
+            }
+
+            .welcome-box {
+                padding: 25px 18px;
+                border-radius: 18px;
+                width: calc(100% - 10px);
+            }
+
+            .login-form-box {
+                padding: 0;
+            }
+
+            .welcome-heading {
+                font-size: 32px;
+                margin-bottom: 20px;
+            }
+
+            .welcome-description {
+                font-size: 15px;
+            }
+
+            .welcome-label {
+                font-size: 13px;
+                margin-bottom: 6px;
+            }
+
+            .logo img {
+                max-width: 160px;
+            }
+
+            .header-content {
+                height: 70px;
+            }
+
+            .header-nav {
+                padding: 0 10px;
+                /* Neomorphism - soft green background on mobile */
+                background: #8ea94e;
+            }
+
+            /* Mobile Navigation */
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                width: 250px;
+                height: calc(100vh - 70px);
+                /* Neomorphism - soft gradient background */
+                background: linear-gradient(180deg, #a8c29e 0%, #8ea94e 100%);
+                transition: right 0.3s ease;
+                /* Neomorphism - soft shadow */
+                box-shadow: -8px 0 16px rgba(0, 0, 0, 0.2);
+                z-index: 999;
+            }
+
+            .nav-menu.active {
+                right: 0;
+            }
+
+            .nav-menu ul {
+                flex-direction: column;
+                height: auto;
+                padding: 20px 0;
+                align-items: stretch;
+            }
+
+            .nav-menu ul li {
+                border-left: none;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                height: auto;
+                background: transparent;
+            }
+
+            .nav-menu a {
+                padding: 15px 20px;
+                width: 100%;
+                color: #1b5e20;
+            }
+
+            .nav-menu a:hover {
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .footer-pills-container {
+                flex-direction: column;
+                gap: 10px;
+                padding: 0 15px;
+                bottom: 15px;
+                align-items: center;
+            }
+
+            .footer-pill {
+                font-size: 11px;
+                padding: 8px 16px;
+                text-align: center;
+            }
+
+            .footer-pill.footer-welcome {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-top">
+            <div class="header-tagline">
+                Analytical Tracking Solution | <em>Over 75 combined years of experience</em>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/">
+                        <img src="logo-original.webp" alt="GPTS Logo" loading="lazy">
+                        <!-- Note: Convert to WebP for better performance -->
+                    </a>
+                </div>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="nav-menu" id="navMenu">
+                    <ul>
+                        <li><a href="#support">Contact Support</a></li>
+                        <li><a href="https://trinalinc.com">Trinal Inc Site</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <div class="content-container">
+            <div class="welcome-box">
+                <div class="welcome-label">Welcome to <br/> Global Project Tracking System® (GPTS®)</div>
+                <div class="login-form-box">
+                <form id="login-form" class="login-form" action="#" method="POST">
+                    <div class="form-group">
+                        <label for="username">Username or Email</label>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            placeholder="Enter your username or email"
+                            required
+                            autocomplete="username"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                        >
+                    </div>
+                    <button type="submit" class="login-button">Log In</button>
+                    <div class="forgot-password">
+                        <a href="#forgot">Forgot your password?</a>
+                    </div>
+                </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Pills positioned on background -->
+        <div class="footer-pills-container">
+            <div class="footer-pill footer-license">© 2025 GPTS. All rights reserved.</div>
+            <div class="footer-pill footer-welcome">the compliance solution built by the compliance professionals.</div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('navMenu');
+
+        hamburger.addEventListener('click', function() {
+            hamburger.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking on a link
+        const navLinks = navMenu.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const isClickInsideMenu = navMenu.contains(event.target);
+            const isClickOnHamburger = hamburger.contains(event.target);
+
+            if (!isClickInsideMenu && !isClickOnHamburger && navMenu.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
+        const loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            window.location.href = '/dashboard';
+        });
+    </script>
+</body>
+</html>

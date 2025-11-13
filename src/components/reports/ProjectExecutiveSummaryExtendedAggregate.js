@@ -591,6 +591,26 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
     gridOptions
   }), [toggleSummaryRow, expandedSummaryRows, getSubcontractorRowStyle, onGridReady, gridOptions]);
 
+  const bottomCardsContainerStyle = useMemo(() => {
+    if (isMobile) {
+      return {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px',
+        width: '100%',
+        marginBottom: '10px'
+      };
+    }
+
+    return {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
+      gap: '10px',
+      marginBottom: '10px',
+      alignItems: 'stretch'
+    };
+  }, [isMobile]);
+
   const handleGenerateReport = (event) => {
     event.preventDefault();
 
@@ -817,21 +837,19 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#4a7c59', flexWrap: 'wrap' }}>
                       <span><strong>Client:</strong> {getLabel(clientOptions, appliedFilters.client, 'N/A')}</span>
                       <span style={{ color: '#ddd' }}>|</span>
-                      <span
-                        data-tooltip-id="projects-tooltip"
-                        data-tooltip-content={getMultipleLabels(projectOptions, appliedFilters.projects)}
-                        style={{ cursor: 'help', borderBottom: '1px dotted #4a7c59' }}
-                      >
-                        <strong>Projects:</strong> {appliedFilters.projects.length}
-                      </span>
-                      <span style={{ color: '#ddd' }}>|</span>
-                      <span
-                        data-tooltip-id="contracts-tooltip"
-                        data-tooltip-content={getMultipleLabels(allContractOptions, appliedFilters.contracts)}
-                        style={{ cursor: 'help', borderBottom: '1px dotted #4a7c59' }}
-                      >
-                        <strong>Contracts:</strong> {appliedFilters.contracts.length}
-                      </span>
+                      {appliedFilters.contracts.length === 1 ? (
+                        <span>
+                          <strong>Contract:</strong> {getLabel(allContractOptions, appliedFilters.contracts[0], 'N/A')}
+                        </span>
+                      ) : (
+                        <span
+                          data-tooltip-id="contracts-tooltip"
+                          data-tooltip-content={getMultipleLabels(allContractOptions, appliedFilters.contracts)}
+                          style={{ cursor: 'help', borderBottom: '1px dotted #4a7c59' }}
+                        >
+                          <strong>Contracts:</strong> {appliedFilters.contracts.length}
+                        </span>
+                      )}
                       <span style={{ color: '#ddd' }}>|</span>
                       <span><strong>Dates:</strong> {appliedFilters.startDate || 'Any'} – {appliedFilters.endDate || 'Any'}</span>
                     </div>
@@ -1303,7 +1321,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
 
       {/* Goals and Business Spend Cards */}
       {subcontractorData.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '10px', marginBottom: '10px' }}>
+        <div style={bottomCardsContainerStyle}>
           {/* Goals Table Card */}
           <div
             style={{
@@ -1311,13 +1329,16 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
               borderRadius: '12px',
               border: '1px solid rgba(142, 169, 78, 0.25)',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
-              padding: '20px'
+              padding: '20px',
+              width: '100%',
+              minWidth: 0,
+              overflow: 'hidden'
             }}
           >
             <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#1b5e20', fontWeight: '600' }}>
               Overall Diversity Business and Workforce Hiring Goals
             </h3>
-            <div style={{ overflowX: 'auto' }}>
+            <div style={{ overflowX: 'auto', width: '100%' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid rgba(142, 169, 78, 0.3)' }}>
@@ -1348,44 +1369,52 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
               borderRadius: '12px',
               border: '1px solid rgba(142, 169, 78, 0.25)',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
-              padding: '20px'
+              padding: '20px',
+              width: '100%',
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden'
             }}
           >
             <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#1b5e20', fontWeight: '600' }}>
               Business Spend
             </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={[
-                    { name: 'MBE', value: 3.39, color: '#5969F3' },
-                    { name: 'Non-Diverse', value: 95.56, color: '#62b29aff' },
-                    { name: 'WBE', value: 1.06, color: '#d79461ff' }
-                  ]}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, value }) => `${name}: ${value}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {[
-                    { name: 'MBE', value: 3.39, color: '#5969F3' },
-                    { name: 'Non-Diverse', value: 95.56, color: '#62b29aff' },
-                    { name: 'WBE', value: 1.06, color: '#d79461ff' }
-                  ].map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => `${value}%`} />
-                <Legend
-                  verticalAlign="bottom"
-                  height={36}
-                  formatter={(value, entry) => `${value}: ${entry.payload.value}%`}
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <div style={{ width: '100%', minWidth: 0, flex: 1 }}>
+              <ResponsiveContainer width="100%" height={isMobile ? 260 : 300}>
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: 'MBE', value: 3.39, color: '#5969F3' },
+                      { name: 'Non-Diverse', value: 95.56, color: '#62b29aff' },
+                      { name: 'WBE', value: 1.06, color: '#d79461ff' }
+                    ]}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    outerRadius={isMobile ? 70 : 80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {[
+                      { name: 'MBE', value: 3.39, color: '#5969F3' },
+                      { name: 'Non-Diverse', value: 95.56, color: '#62b29aff' },
+                      { name: 'WBE', value: 1.06, color: '#d79461ff' }
+                    ].map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip formatter={(value) => `${value}%`} />
+                  <Legend
+                    verticalAlign="bottom"
+                    height={36}
+                    formatter={(value, entry) => `${value}: ${entry.payload.value}%`}
+                    wrapperStyle={{ fontSize: isMobile ? '12px' : '13px' }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       )}

@@ -180,26 +180,26 @@ const ContractScopeCellRenderer = (params) => {
 const subcontractorColumnDefs = [
   { field: 'subContractor', headerName: 'Sub Contractor, Ward, County & State', minWidth: 210 },
   { field: 'certificationAgency', headerName: 'Certification Agency', minWidth: 160 },
-  { field: 'lbeAdjusted', headerName: 'LBE Adjusted', minWidth: 130 },
-  { field: 'lbeAdjustedPercent', headerName: '%', width: 80 },
-  { field: 'mbeAdjusted', headerName: 'MBE Adjusted', minWidth: 130 },
-  { field: 'mbeAdjustedPercent', headerName: '%', width: 80 },
-  { field: 'wbeAdjusted', headerName: 'WBE Adjusted', minWidth: 130 },
-  { field: 'wbeAdjustedPercent', headerName: '%', width: 80 },
-  { field: 'sbeAdjusted', headerName: 'SBE Adjusted', minWidth: 130 },
-  { field: 'sbeAdjustedPercent', headerName: '%', width: 80 },
-  { field: 'vbeAdjusted', headerName: 'VBE Adjusted', minWidth: 130 },
-  { field: 'vbeAdjustedPercent', headerName: '%', width: 80 },
-  { field: 'lbePaidToDate', headerName: 'LBE Paid To Date', minWidth: 140 },
-  { field: 'lbePaidToDatePercent', headerName: '%', width: 80 },
-  { field: 'mbePaidToDate', headerName: 'MBE Paid To Date', minWidth: 140 },
-  { field: 'mbePaidToDatePercent', headerName: '%', width: 80 },
-  { field: 'wbePaidToDate', headerName: 'WBE Paid To Date', minWidth: 140 },
-  { field: 'wbePaidToDatePercent', headerName: '%', width: 80 },
-  { field: 'sbePaidToDate', headerName: 'SBE Paid To Date', minWidth: 140 },
-  { field: 'sbePaidToDatePercent', headerName: '%', width: 80 },
-  { field: 'vbePaidToDate', headerName: 'VBE Paid To Date', minWidth: 140 },
-  { field: 'vbePaidToDatePercent', headerName: '%', width: 80 }
+  { field: 'lbeAdjusted', headerName: 'LBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'lbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
+  { field: 'mbeAdjusted', headerName: 'MBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'mbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
+  { field: 'wbeAdjusted', headerName: 'WBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'wbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
+  { field: 'sbeAdjusted', headerName: 'SBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'sbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
+  { field: 'vbeAdjusted', headerName: 'VBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'vbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
+  { field: 'lbePaidToDate', headerName: 'LBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'lbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
+  { field: 'mbePaidToDate', headerName: 'MBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'mbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
+  { field: 'wbePaidToDate', headerName: 'WBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'wbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
+  { field: 'sbePaidToDate', headerName: 'SBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'sbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
+  { field: 'vbePaidToDate', headerName: 'VBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
+  { field: 'vbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) }
 ];
 
 const ProjectExecutiveSummaryExtendedAggregate = () => {
@@ -422,31 +422,36 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
         field: 'originalContractAmount',
         headerName: 'Original Contract Amount',
         minWidth: 170,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.originalContractAmount)
+        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.originalContractAmount),
+        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
       },
       {
         field: 'changeOrders',
         headerName: 'Change Orders',
         minWidth: 150,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.changeOrders)
+        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.changeOrders),
+        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
       },
       {
         field: 'adjustedContractAmount',
         headerName: 'Adjusted Contract Amount',
         minWidth: 170,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.adjustedContractAmount)
+        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.adjustedContractAmount),
+        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
       },
       {
         field: 'paidToDateAmount',
         headerName: 'Paid To Date Amount',
         minWidth: 160,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.paidToDateAmount)
+        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.paidToDateAmount),
+        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
       },
       {
         field: 'paidToDatePercent',
         headerName: '%',
         width: 90,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.paidToDatePercent)
+        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.paidToDatePercent),
+        valueFormatter: ({ value }) => value ? formatPercent(value, 1) : ''
       }
     ];
 

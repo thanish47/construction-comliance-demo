@@ -106,7 +106,7 @@ const ContractDetails = () => {
                 onClick={handleSummaryToggle}
                 title={summaryOpen ? 'Hide Contract Summary' : 'Show Contract Summary'}
                 style={{
-                  padding: '6px',
+                  padding: '6px 8px',
                   background: summaryOpen ? 'rgba(142, 169, 78, 0.15)' : 'rgba(142, 169, 78, 0.1)',
                   border: '1px solid rgba(142, 169, 78, 0.3)',
                   borderRadius: '6px',
@@ -114,6 +114,7 @@ const ContractDetails = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  gap: '4px',
                   transition: 'all 0.2s ease',
                   marginRight: '10px'
                 }}
@@ -127,7 +128,20 @@ const ContractDetails = () => {
                 }}
               >
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ width: '18px', height: '18px', fill: '#4a7c59' }}>
-                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+                  <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                </svg>
+                <svg
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{
+                    width: '14px',
+                    height: '14px',
+                    fill: '#4a7c59',
+                    transform: summaryOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.3s ease'
+                  }}
+                >
+                  <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
                 </svg>
               </button>
             </div>

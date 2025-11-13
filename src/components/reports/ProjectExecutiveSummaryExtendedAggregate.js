@@ -6,9 +6,10 @@ import Select from 'react-select';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import projectsData from '../../data/projects.json';
 import contractsData from '../../data/contracts.json';
-import reportData from '../../data/ProjectExecutiveSummaryExtendedAggregate.json';
+import { generateAggregateReportData } from '../../services/generateAggregateReportData';
 
 const formatCurrency = (value) => {
   if (value === null || value === undefined || value === '') return '';
@@ -122,6 +123,69 @@ const ContractScopeCellRenderer = (params) => {
       );
     }
 
+    // Calculate SubTotal row with aggregated values
+    const subTotal = {
+      subContractor: 'Sub Total',
+      certificationAgency: '',
+      lbeAdjusted: 0,
+      lbeAdjustedPercent: 0,
+      mbeAdjusted: 0,
+      mbeAdjustedPercent: 0,
+      wbeAdjusted: 0,
+      wbeAdjustedPercent: 0,
+      sbeAdjusted: 0,
+      sbeAdjustedPercent: 0,
+      vbeAdjusted: 0,
+      vbeAdjustedPercent: 0,
+      lbePaidToDate: 0,
+      lbePaidToDatePercent: 0,
+      mbePaidToDate: 0,
+      mbePaidToDatePercent: 0,
+      wbePaidToDate: 0,
+      wbePaidToDatePercent: 0,
+      sbePaidToDate: 0,
+      sbePaidToDatePercent: 0,
+      vbePaidToDate: 0,
+      vbePaidToDatePercent: 0
+    };
+
+    // Aggregate currency values (sum)
+    subcontractors.forEach(sub => {
+      subTotal.lbeAdjusted += Number(sub.lbeAdjusted) || 0;
+      subTotal.mbeAdjusted += Number(sub.mbeAdjusted) || 0;
+      subTotal.wbeAdjusted += Number(sub.wbeAdjusted) || 0;
+      subTotal.sbeAdjusted += Number(sub.sbeAdjusted) || 0;
+      subTotal.vbeAdjusted += Number(sub.vbeAdjusted) || 0;
+      subTotal.lbePaidToDate += Number(sub.lbePaidToDate) || 0;
+      subTotal.mbePaidToDate += Number(sub.mbePaidToDate) || 0;
+      subTotal.wbePaidToDate += Number(sub.wbePaidToDate) || 0;
+      subTotal.sbePaidToDate += Number(sub.sbePaidToDate) || 0;
+      subTotal.vbePaidToDate += Number(sub.vbePaidToDate) || 0;
+    });
+
+    // Calculate percentage averages (weighted by currency values where applicable)
+    const totalAdjusted = subTotal.lbeAdjusted + subTotal.mbeAdjusted + subTotal.wbeAdjusted + subTotal.sbeAdjusted + subTotal.vbeAdjusted;
+    const totalPaidToDate = subTotal.lbePaidToDate + subTotal.mbePaidToDate + subTotal.wbePaidToDate + subTotal.sbePaidToDate + subTotal.vbePaidToDate;
+
+    if (totalAdjusted > 0) {
+      subTotal.lbeAdjustedPercent = (subTotal.lbeAdjusted / totalAdjusted) * 100;
+      subTotal.mbeAdjustedPercent = (subTotal.mbeAdjusted / totalAdjusted) * 100;
+      subTotal.wbeAdjustedPercent = (subTotal.wbeAdjusted / totalAdjusted) * 100;
+      subTotal.sbeAdjustedPercent = (subTotal.sbeAdjusted / totalAdjusted) * 100;
+      subTotal.vbeAdjustedPercent = (subTotal.vbeAdjusted / totalAdjusted) * 100;
+    }
+
+    if (totalPaidToDate > 0) {
+      subTotal.lbePaidToDatePercent = (subTotal.lbePaidToDate / totalPaidToDate) * 100;
+      subTotal.mbePaidToDatePercent = (subTotal.mbePaidToDate / totalPaidToDate) * 100;
+      subTotal.wbePaidToDatePercent = (subTotal.wbePaidToDate / totalPaidToDate) * 100;
+      subTotal.sbePaidToDatePercent = (subTotal.sbePaidToDate / totalPaidToDate) * 100;
+      subTotal.vbePaidToDatePercent = (subTotal.vbePaidToDate / totalPaidToDate) * 100;
+    }
+
+    // Append SubTotal row to subcontractors data
+    const subcontractorsWithTotal = [...subcontractors, subTotal];
+
     return (
       <div style={{ padding: '10px 0', width: '100%' }}>
         <div
@@ -134,7 +198,7 @@ const ContractScopeCellRenderer = (params) => {
         >
           <AgGridReact
             gridOptions={context.gridOptions}
-            rowData={subcontractors}
+            rowData={subcontractorsWithTotal}
             columnDefs={context.subcontractorColumnDefs}
             defaultColDef={{
               resizable: true,
@@ -152,6 +216,15 @@ const ContractScopeCellRenderer = (params) => {
     );
   }
 
+  // Don't show expand/collapse for Total row
+  if (data?.isTotalRow) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span>{value}</span>
+      </div>
+    );
+  }
+
   const isExpandable = Array.isArray(subcontractors) && subcontractors.length > 0;
   const expanded = context?.expandedSummaryRows?.has(data?.id);
   const iconClass = expanded ? 'ag-icon ag-icon-tree-open': 'ag-icon ag-icon-tree-closed';
@@ -165,7 +238,7 @@ const ContractScopeCellRenderer = (params) => {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      {isExpandable ? 
+      {isExpandable ?
         ( <span
           className={iconClass}
           onClick={isExpandable ? handleToggle : undefined}
@@ -222,6 +295,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
   const [appliedFilters, setAppliedFilters] = useState(null);
   const [showFilters, setShowFilters] = useState(true);
   const [showExportDropdown, setShowExportDropdown] = useState(false);
+  const [showFilterDetails, setShowFilterDetails] = useState(true);
   const [isMobile, setIsMobile] = useState(() => {
     if (typeof window === 'undefined') return false;
     return window.innerWidth <= 767;
@@ -364,6 +438,17 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
     return null;
   }, []);
 
+  const getSummaryRowStyle = useCallback((params) => {
+    if (params.data && params.data.isTotalRow) {
+      return {
+        background: 'rgba(142, 169, 78, 0.15)',
+        fontWeight: '600',
+        borderTop: '2px solid rgba(142, 169, 78, 0.5)'
+      };
+    }
+    return null;
+  }, []);
+
   const toggleSummaryRow = useCallback((rowId) => {
     setExpandedSummaryRows((prev) => {
       const next = new Set(prev);
@@ -394,6 +479,36 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
         });
       }
     });
+
+    // Calculate Total row with aggregated values
+    const total = {
+      id: 'total-row',
+      contractScope: 'Total',
+      projectScope: '',
+      contractor: '',
+      originalContractAmount: 0,
+      changeOrders: 0,
+      adjustedContractAmount: 0,
+      paidToDateAmount: 0,
+      paidToDatePercent: 0,
+      isTotalRow: true
+    };
+
+    // Aggregate values from all summary rows
+    summaryData.forEach(row => {
+      total.originalContractAmount += Number(row.originalContractAmount) || 0;
+      total.changeOrders += Number(row.changeOrders) || 0;
+      total.adjustedContractAmount += Number(row.adjustedContractAmount) || 0;
+      total.paidToDateAmount += Number(row.paidToDateAmount) || 0;
+    });
+
+    // Calculate average percentage
+    if (total.adjustedContractAmount > 0) {
+      total.paidToDatePercent = (total.paidToDateAmount / total.adjustedContractAmount) * 100;
+    }
+
+    // Append Total row
+    rows.push(total);
 
     return rows;
   }, [summaryData, expandedSummaryRows]);
@@ -549,23 +664,17 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
       return;
     }
 
-    // Split data into summary and subcontractor tables
-    const subcontractorRows = reportData.subcontractors.map((row, index) => ({
-      id: `subcontractor-${index + 1}`,
-      ...row
-    }));
+    const { summaryRows, subcontractorRows } = generateAggregateReportData({
+      selectedProjectNumbers: filters.projects,
+      selectedContractNumbers: filters.contracts
+    });
 
-    const summaryRow = {
-      id: 'summary-1',
-      ...reportData.summary,
-      subcontractors: subcontractorRows
-    };
-
-    setSummaryData([summaryRow]);
+    setSummaryData(summaryRows);
     setSubcontractorData(subcontractorRows);
-    setExpandedSummaryRows(new Set([summaryRow.id]));
+    setExpandedSummaryRows(summaryRows.length > 0 ? new Set([summaryRows[0].id]) : new Set());
     setAppliedFilters(filters);
     setShowFilters(false);
+    setShowFilterDetails(false);
     setHasGenerated(true);
 
     toast.success('Report generated successfully!', {
@@ -663,13 +772,74 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
           border: '1px solid rgba(142, 169, 78, 0.25)',
           boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
           padding: '20px',
-          marginBottom: '20px'
+          marginBottom: '10px'
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: showFilters ? '15px' : 0, gap: '15px', flexWrap: 'wrap' }}>
           <div style={{ flex: 1 }}>
-            <h2 style={{ margin: 0, fontSize: '18px', color: '#1b5e20' }}>Filters</h2>
-            {!showFilters && appliedFilters && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <h2 style={{ margin: 0, fontSize: '18px', color: '#1b5e20' }}>Filters</h2>
+              {!showFilters && appliedFilters && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setShowFilterDetails(!showFilterDetails)}
+                    title={showFilterDetails ? 'Collapse Filters' : 'Expand Filters'}
+                    style={{
+                      padding: '4px',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#1b5e20',
+                      transition: 'transform 0.2s ease'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        fill: '#1b5e20',
+                        transform: showFilterDetails ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.3s ease'
+                      }}
+                    >
+                      <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+                    </svg>
+                  </button>
+                  {!showFilterDetails && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#4a7c59', flexWrap: 'wrap' }}>
+                      <span><strong>Client:</strong> {getLabel(clientOptions, appliedFilters.client, 'N/A')}</span>
+                      <span style={{ color: '#ddd' }}>|</span>
+                      <span
+                        data-tooltip-id="projects-tooltip"
+                        data-tooltip-content={getMultipleLabels(projectOptions, appliedFilters.projects)}
+                        style={{ cursor: 'help', borderBottom: '1px dotted #4a7c59' }}
+                      >
+                        <strong>Projects:</strong> {appliedFilters.projects.length}
+                      </span>
+                      <span style={{ color: '#ddd' }}>|</span>
+                      <span
+                        data-tooltip-id="contracts-tooltip"
+                        data-tooltip-content={getMultipleLabels(allContractOptions, appliedFilters.contracts)}
+                        style={{ cursor: 'help', borderBottom: '1px dotted #4a7c59' }}
+                      >
+                        <strong>Contracts:</strong> {appliedFilters.contracts.length}
+                      </span>
+                      <span style={{ color: '#ddd' }}>|</span>
+                      <span><strong>Dates:</strong> {appliedFilters.startDate || 'Any'} – {appliedFilters.endDate || 'Any'}</span>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+            {!showFilters && appliedFilters && showFilterDetails && (
               <div style={{ margin: '6px 0 0', fontSize: '13px', color: '#4a7c59', display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                 <span><strong>Client:</strong> {getLabel(clientOptions, appliedFilters.client, 'All Clients')}</span>
                 <span><strong>Projects:</strong> {getMultipleLabels(projectOptions, appliedFilters.projects)}</span>
@@ -1103,7 +1273,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
             border: '1px solid rgba(142, 169, 78, 0.25)',
             boxShadow: '0 4px 16px rgba(0, 0, 0, 0.08)',
             padding: '20px',
-            marginBottom: '20px'
+            marginBottom: '10px'
           }}
         >
           <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#1b5e20', fontWeight: '600' }}>
@@ -1124,6 +1294,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
               onGridReady={onGridReady}
               domLayout='autoHeight'
               getRowHeight={getSummaryRowHeight}
+              getRowStyle={getSummaryRowStyle}
               context={gridContext}
             />
           </div>
@@ -1132,7 +1303,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
 
       {/* Goals and Business Spend Cards */}
       {subcontractorData.length > 0 && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(450px, 1fr))', gap: '10px', marginBottom: '10px' }}>
           {/* Goals Table Card */}
           <div
             style={{
@@ -1188,8 +1359,8 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                 <Pie
                   data={[
                     { name: 'MBE', value: 3.39, color: '#5969F3' },
-                    { name: 'Non-Diverse', value: 95.56, color: '#6FE6C3' },
-                    { name: 'WBE', value: 1.06, color: '#FEBF8F' }
+                    { name: 'Non-Diverse', value: 95.56, color: '#62b29aff' },
+                    { name: 'WBE', value: 1.06, color: '#d79461ff' }
                   ]}
                   cx="50%"
                   cy="50%"
@@ -1201,8 +1372,8 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                 >
                   {[
                     { name: 'MBE', value: 3.39, color: '#5969F3' },
-                    { name: 'Non-Diverse', value: 95.56, color: '#6FE6C3' },
-                    { name: 'WBE', value: 1.06, color: '#FEBF8F' }
+                    { name: 'Non-Diverse', value: 95.56, color: '#62b29aff' },
+                    { name: 'WBE', value: 1.06, color: '#d79461ff' }
                   ].map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -1253,6 +1424,34 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
           </p>
         </div>
       )}
+
+      {/* React Tooltips */}
+      <ReactTooltip
+        id="projects-tooltip"
+        place="bottom"
+        style={{
+          backgroundColor: '#2d4a1f',
+          color: '#ffffff',
+          borderRadius: '6px',
+          fontSize: '13px',
+          padding: '8px 12px',
+          maxWidth: '400px',
+          zIndex: 9999
+        }}
+      />
+      <ReactTooltip
+        id="contracts-tooltip"
+        place="bottom"
+        style={{
+          backgroundColor: '#2d4a1f',
+          color: '#ffffff',
+          borderRadius: '6px',
+          fontSize: '13px',
+          padding: '8px 12px',
+          maxWidth: '400px',
+          zIndex: 9999
+        }}
+      />
     </section>
   );
 };

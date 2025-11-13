@@ -1929,30 +1929,6 @@
       "sbePaidToDatePercent": 0,
       "vbePaidToDate": 0,
       "vbePaidToDatePercent": 0
-    },
-    {
-      "subContractor": "Sub Total",
-      "certificationAgency": "",
-      "lbeAdjusted": 0,
-      "lbeAdjustedPercent": 0,
-      "mbeAdjusted": 110454321.59,
-      "mbeAdjustedPercent": 31.3,
-      "wbeAdjusted": 17959439.47,
-      "wbeAdjustedPercent": 5.1,
-      "sbeAdjusted": 0,
-      "sbeAdjustedPercent": 0,
-      "vbeAdjusted": 0,
-      "vbeAdjustedPercent": 0,
-      "lbePaidToDate": 0,
-      "lbePaidToDatePercent": 0,
-      "mbePaidToDate": 12487200.8,
-      "mbePaidToDatePercent": 7.84,
-      "wbePaidToDate": 3730814.45,
-      "wbePaidToDatePercent": 2.34,
-      "sbePaidToDate": 0,
-      "sbePaidToDatePercent": 0,
-      "vbePaidToDate": 0,
-      "vbePaidToDatePercent": 0
     }
   ]
 }

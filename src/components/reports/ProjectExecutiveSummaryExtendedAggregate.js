@@ -30,6 +30,14 @@ const formatPercent = (value, digits = 1) => {
 
 const percentFormatter = (digits = 1) => ({ value }) => formatPercent(value, digits);
 
+const createFieldGetter = (field, rowType) => (params) => {
+  const data = params.data;
+  if (!data || data.rowType !== rowType) {
+    return null;
+  }
+  return data[field];
+};
+
 const createProjectOptions = (projects) =>
   projects.map((project) => ({
     value: String(project.ProjectNumber),
@@ -43,8 +51,57 @@ const createContractOptions = (contracts) =>
   }));
 
 // Clients options data
-const DETAIL_GRID_HEIGHT = 360;
-const DETAIL_ROW_PADDING = 30;
+const HierarchyCellRenderer = (params) => {
+  const { data, context } = params;
+
+  if (!data) {
+    return null;
+  }
+
+  const { rowType, projectScope, contractScope, subContractor, hasChildren, id } = data;
+  const isProject = rowType === 'projectGroup';
+  const isContract = rowType === 'contractGroup';
+  const indent = isProject ? 0 : isContract ? 20 : 42;
+  const label = isProject
+    ? projectScope
+    : isContract
+      ? contractScope
+      : subContractor || contractScope || projectScope;
+
+  const isExpandable = hasChildren && (isProject || isContract);
+  const expanded = isProject
+    ? context?.expandedProjects?.has(id)
+    : isContract
+      ? context?.expandedContracts?.has(id)
+      : false;
+  
+  const iconClass = expanded ? 'ag-icon ag-icon-tree-open': 'ag-icon ag-icon-tree-closed';
+
+  const handleToggle = (event) => {
+    event?.stopPropagation();
+    if (!isExpandable) return;
+    if (isProject) {
+      context?.toggleProject?.(id);
+    } else if (isContract) {
+      context?.toggleContract?.(id);
+    }
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: `${indent}px` }}>
+      {isExpandable ? (
+        ( <span
+          className={iconClass}
+          onClick={isExpandable ? handleToggle : undefined}
+          aria-disabled={!isExpandable}/>
+        )
+      ) : (
+        <span style={{ width: '24px' }} />
+      )}
+      <span style={{ fontWeight: isProject ? 700 : isContract ? 600 : 400 }}>{label}</span>
+    </div>
+  );
+};
 
 const clientOptions = [
   { value: '66', label: 'Alberici Corporation' },
@@ -110,171 +167,6 @@ const clientOptions = [
   { value: '67', label: 'William A. Randolph' }
 ];
 
-const ContractScopeCellRenderer = (params) => {
-  const { data, value, context } = params;
-  const subcontractors = data?.parentRow?.subcontractors || data?.subcontractors || [];
-
-  if (data?.isDetailRow) {
-    if (!subcontractors.length) {
-      return (
-        <div style={{ padding: '10px 0', fontStyle: 'italic', color: '#2d4a1f' }}>
-          No subcontractor details available.
-        </div>
-      );
-    }
-
-    // Calculate SubTotal row with aggregated values
-    const subTotal = {
-      subContractor: 'Sub Total',
-      certificationAgency: '',
-      lbeAdjusted: 0,
-      lbeAdjustedPercent: 0,
-      mbeAdjusted: 0,
-      mbeAdjustedPercent: 0,
-      wbeAdjusted: 0,
-      wbeAdjustedPercent: 0,
-      sbeAdjusted: 0,
-      sbeAdjustedPercent: 0,
-      vbeAdjusted: 0,
-      vbeAdjustedPercent: 0,
-      lbePaidToDate: 0,
-      lbePaidToDatePercent: 0,
-      mbePaidToDate: 0,
-      mbePaidToDatePercent: 0,
-      wbePaidToDate: 0,
-      wbePaidToDatePercent: 0,
-      sbePaidToDate: 0,
-      sbePaidToDatePercent: 0,
-      vbePaidToDate: 0,
-      vbePaidToDatePercent: 0
-    };
-
-    // Aggregate currency values (sum)
-    subcontractors.forEach(sub => {
-      subTotal.lbeAdjusted += Number(sub.lbeAdjusted) || 0;
-      subTotal.mbeAdjusted += Number(sub.mbeAdjusted) || 0;
-      subTotal.wbeAdjusted += Number(sub.wbeAdjusted) || 0;
-      subTotal.sbeAdjusted += Number(sub.sbeAdjusted) || 0;
-      subTotal.vbeAdjusted += Number(sub.vbeAdjusted) || 0;
-      subTotal.lbePaidToDate += Number(sub.lbePaidToDate) || 0;
-      subTotal.mbePaidToDate += Number(sub.mbePaidToDate) || 0;
-      subTotal.wbePaidToDate += Number(sub.wbePaidToDate) || 0;
-      subTotal.sbePaidToDate += Number(sub.sbePaidToDate) || 0;
-      subTotal.vbePaidToDate += Number(sub.vbePaidToDate) || 0;
-    });
-
-    // Calculate percentage averages (weighted by currency values where applicable)
-    const totalAdjusted = subTotal.lbeAdjusted + subTotal.mbeAdjusted + subTotal.wbeAdjusted + subTotal.sbeAdjusted + subTotal.vbeAdjusted;
-    const totalPaidToDate = subTotal.lbePaidToDate + subTotal.mbePaidToDate + subTotal.wbePaidToDate + subTotal.sbePaidToDate + subTotal.vbePaidToDate;
-
-    if (totalAdjusted > 0) {
-      subTotal.lbeAdjustedPercent = (subTotal.lbeAdjusted / totalAdjusted) * 100;
-      subTotal.mbeAdjustedPercent = (subTotal.mbeAdjusted / totalAdjusted) * 100;
-      subTotal.wbeAdjustedPercent = (subTotal.wbeAdjusted / totalAdjusted) * 100;
-      subTotal.sbeAdjustedPercent = (subTotal.sbeAdjusted / totalAdjusted) * 100;
-      subTotal.vbeAdjustedPercent = (subTotal.vbeAdjusted / totalAdjusted) * 100;
-    }
-
-    if (totalPaidToDate > 0) {
-      subTotal.lbePaidToDatePercent = (subTotal.lbePaidToDate / totalPaidToDate) * 100;
-      subTotal.mbePaidToDatePercent = (subTotal.mbePaidToDate / totalPaidToDate) * 100;
-      subTotal.wbePaidToDatePercent = (subTotal.wbePaidToDate / totalPaidToDate) * 100;
-      subTotal.sbePaidToDatePercent = (subTotal.sbePaidToDate / totalPaidToDate) * 100;
-      subTotal.vbePaidToDatePercent = (subTotal.vbePaidToDate / totalPaidToDate) * 100;
-    }
-
-    // Append SubTotal row to subcontractors data
-    const subcontractorsWithTotal = [...subcontractors, subTotal];
-
-    return (
-      <div style={{ padding: '10px 0', width: '100%' }}>
-        <div
-          className="ag-theme-balham"
-          style={{
-            width: '100%',
-            height: `${DETAIL_GRID_HEIGHT}px`,
-            background: 'transparent'
-          }}
-        >
-          <AgGridReact
-            gridOptions={context.gridOptions}
-            rowData={subcontractorsWithTotal}
-            columnDefs={context.subcontractorColumnDefs}
-            defaultColDef={{
-              resizable: true,
-              sortable: true,
-              minWidth: 120
-            }}
-            animateRows={true}
-            suppressCellFocus={true}
-            domLayout="normal"
-            getRowStyle={context.getSubcontractorRowStyle}
-            onGridReady={context.onGridReady}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Don't show expand/collapse for Total row
-  if (data?.isTotalRow) {
-    return (
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span>{value}</span>
-      </div>
-    );
-  }
-
-  const isExpandable = Array.isArray(subcontractors) && subcontractors.length > 0;
-  const expanded = context?.expandedSummaryRows?.has(data?.id);
-  const iconClass = expanded ? 'ag-icon ag-icon-tree-open': 'ag-icon ag-icon-tree-closed';
-
-  const handleToggle = (event) => {
-    event.stopPropagation();
-    if (isExpandable && context?.toggleSummaryRow) {
-      context.toggleSummaryRow(data.id);
-    }
-  };
-
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      {isExpandable ?
-        ( <span
-          className={iconClass}
-          onClick={isExpandable ? handleToggle : undefined}
-          aria-disabled={!isExpandable}/>
-        ): '•'}
-      <span>{value}</span>
-    </div>
-  );
-};
-
-// Subcontractor table columns (remaining columns)
-const subcontractorColumnDefs = [
-  { field: 'subContractor', headerName: 'Sub Contractor, Ward, County & State', minWidth: 210 },
-  { field: 'certificationAgency', headerName: 'Certification Agency', minWidth: 160 },
-  { field: 'lbeAdjusted', headerName: 'LBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'lbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'mbeAdjusted', headerName: 'MBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'mbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'wbeAdjusted', headerName: 'WBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'wbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'sbeAdjusted', headerName: 'SBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'sbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'vbeAdjusted', headerName: 'VBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'vbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'lbePaidToDate', headerName: 'LBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'lbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
-  { field: 'mbePaidToDate', headerName: 'MBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'mbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
-  { field: 'wbePaidToDate', headerName: 'WBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'wbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
-  { field: 'sbePaidToDate', headerName: 'SBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'sbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
-  { field: 'vbePaidToDate', headerName: 'VBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'vbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) }
-];
-
 const ProjectExecutiveSummaryExtendedAggregate = () => {
   const projectOptions = useMemo(() => createProjectOptions(projectsData), []);
   const allContractOptions = useMemo(() => createContractOptions(contractsData), []);
@@ -290,7 +182,8 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
   });
   const [summaryData, setSummaryData] = useState([]);
   const [subcontractorData, setSubcontractorData] = useState([]);
-  const [expandedSummaryRows, setExpandedSummaryRows] = useState(() => new Set());
+  const [expandedProjects, setExpandedProjects] = useState(new Set());
+  const [expandedContracts, setExpandedContracts] = useState(new Set());
   const [hasGenerated, setHasGenerated] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState(null);
   const [showFilters, setShowFilters] = useState(true);
@@ -427,169 +320,361 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
     params.api.sizeColumnsToFit();
   }, []);
 
-  const getSubcontractorRowStyle = useCallback((params) => {
-    if (params.data && params.data.subContractor === 'Sub Total') {
-      return {
-        background: 'rgba(142, 169, 78, 0.15)',
-        fontWeight: '600',
-        borderTop: '2px solid rgba(142, 169, 78, 0.5)'
-      };
+  const summaryColumnDefs = useMemo(() => [
+    {
+      field: 'projectScope',
+      headerName: 'Project / Contract / Subcontractor',
+      minWidth: 260,
+      cellRenderer: HierarchyCellRenderer
+    },
+    {
+      field: 'contractor',
+      headerName: 'Contractor, Ward, County & State',
+      minWidth: 220,
+      valueGetter: (params) => params.data?.rowType === 'contractGroup' ? params.data.contractor : ''
+    },
+    {
+      field: 'originalContractAmount',
+      headerName: 'Original Contract Amount',
+      minWidth: 170,
+      valueGetter: createFieldGetter('originalContractAmount', 'contractGroup'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'changeOrders',
+      headerName: 'Change Orders',
+      minWidth: 150,
+      valueGetter: createFieldGetter('changeOrders', 'contractGroup'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'adjustedContractAmount',
+      headerName: 'Adjusted Contract Amount',
+      minWidth: 170,
+      valueGetter: createFieldGetter('adjustedContractAmount', 'contractGroup'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'paidToDateAmount',
+      headerName: 'Paid To Date Amount',
+      minWidth: 160,
+      valueGetter: createFieldGetter('paidToDateAmount', 'contractGroup'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'paidToDatePercent',
+      headerName: '% Paid',
+      width: 110,
+      valueGetter: createFieldGetter('paidToDatePercent', 'contractGroup'),
+      valueFormatter: percentFormatter(1)
+    },
+    {
+      field: 'certificationAgency',
+      headerName: 'Certification Agency',
+      minWidth: 160,
+      valueGetter: createFieldGetter('certificationAgency', 'subcontractor')
+    },
+    {
+      field: 'lbeAdjusted',
+      headerName: 'LBE Adjusted',
+      minWidth: 130,
+      valueGetter: createFieldGetter('lbeAdjusted', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'lbeAdjustedPercent',
+      headerName: 'LBE %',
+      width: 90,
+      valueGetter: createFieldGetter('lbeAdjustedPercent', 'subcontractor'),
+      valueFormatter: percentFormatter(1)
+    },
+    {
+      field: 'mbeAdjusted',
+      headerName: 'MBE Adjusted',
+      minWidth: 130,
+      valueGetter: createFieldGetter('mbeAdjusted', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'mbeAdjustedPercent',
+      headerName: 'MBE %',
+      width: 90,
+      valueGetter: createFieldGetter('mbeAdjustedPercent', 'subcontractor'),
+      valueFormatter: percentFormatter(1)
+    },
+    {
+      field: 'wbeAdjusted',
+      headerName: 'WBE Adjusted',
+      minWidth: 130,
+      valueGetter: createFieldGetter('wbeAdjusted', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'wbeAdjustedPercent',
+      headerName: 'WBE %',
+      width: 90,
+      valueGetter: createFieldGetter('wbeAdjustedPercent', 'subcontractor'),
+      valueFormatter: percentFormatter(1)
+    },
+    {
+      field: 'sbeAdjusted',
+      headerName: 'SBE Adjusted',
+      minWidth: 130,
+      valueGetter: createFieldGetter('sbeAdjusted', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'sbeAdjustedPercent',
+      headerName: 'SBE %',
+      width: 90,
+      valueGetter: createFieldGetter('sbeAdjustedPercent', 'subcontractor'),
+      valueFormatter: percentFormatter(1)
+    },
+    {
+      field: 'vbeAdjusted',
+      headerName: 'VBE Adjusted',
+      minWidth: 130,
+      valueGetter: createFieldGetter('vbeAdjusted', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'vbeAdjustedPercent',
+      headerName: 'VBE %',
+      width: 90,
+      valueGetter: createFieldGetter('vbeAdjustedPercent', 'subcontractor'),
+      valueFormatter: percentFormatter(1)
+    },
+    {
+      field: 'lbePaidToDate',
+      headerName: 'LBE Paid To Date',
+      minWidth: 140,
+      valueGetter: createFieldGetter('lbePaidToDate', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'lbePaidToDatePercent',
+      headerName: 'LBE Paid %',
+      width: 110,
+      valueGetter: createFieldGetter('lbePaidToDatePercent', 'subcontractor'),
+      valueFormatter: percentFormatter(2)
+    },
+    {
+      field: 'mbePaidToDate',
+      headerName: 'MBE Paid To Date',
+      minWidth: 140,
+      valueGetter: createFieldGetter('mbePaidToDate', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'mbePaidToDatePercent',
+      headerName: 'MBE Paid %',
+      width: 110,
+      valueGetter: createFieldGetter('mbePaidToDatePercent', 'subcontractor'),
+      valueFormatter: percentFormatter(2)
+    },
+    {
+      field: 'wbePaidToDate',
+      headerName: 'WBE Paid To Date',
+      minWidth: 140,
+      valueGetter: createFieldGetter('wbePaidToDate', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'wbePaidToDatePercent',
+      headerName: 'WBE Paid %',
+      width: 110,
+      valueGetter: createFieldGetter('wbePaidToDatePercent', 'subcontractor'),
+      valueFormatter: percentFormatter(2)
+    },
+    {
+      field: 'sbePaidToDate',
+      headerName: 'SBE Paid To Date',
+      minWidth: 140,
+      valueGetter: createFieldGetter('sbePaidToDate', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'sbePaidToDatePercent',
+      headerName: 'SBE Paid %',
+      width: 110,
+      valueGetter: createFieldGetter('sbePaidToDatePercent', 'subcontractor'),
+      valueFormatter: percentFormatter(2)
+    },
+    {
+      field: 'vbePaidToDate',
+      headerName: 'VBE Paid To Date',
+      minWidth: 140,
+      valueGetter: createFieldGetter('vbePaidToDate', 'subcontractor'),
+      valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+    },
+    {
+      field: 'vbePaidToDatePercent',
+      headerName: 'VBE Paid %',
+      width: 110,
+      valueGetter: createFieldGetter('vbePaidToDatePercent', 'subcontractor'),
+      valueFormatter: percentFormatter(2)
     }
-    return null;
-  }, []);
+  ], []);
 
-  const getSummaryRowStyle = useCallback((params) => {
-    if (params.data && params.data.isTotalRow) {
-      return {
-        background: 'rgba(142, 169, 78, 0.15)',
-        fontWeight: '600',
-        borderTop: '2px solid rgba(142, 169, 78, 0.5)'
-      };
+  const projectHierarchy = useMemo(() => {
+    if (!summaryData || summaryData.length === 0) {
+      return [];
     }
-    return null;
-  }, []);
 
-  const toggleSummaryRow = useCallback((rowId) => {
-    setExpandedSummaryRows((prev) => {
+    const projectMap = new Map();
+    const contractMap = new Map();
+
+    summaryData.forEach((row) => {
+      if (row.rowType !== 'summary') {
+        return;
+      }
+
+      const projectKey = row.projectScope || 'Unassigned Project';
+      let projectEntry = projectMap.get(projectKey);
+
+      if (!projectEntry) {
+        projectEntry = {
+          id: `project-${projectMap.size + 1}`,
+          key: projectKey,
+          label: projectKey,
+          contracts: []
+        };
+        projectMap.set(projectKey, projectEntry);
+      }
+
+      const contractEntry = {
+        id: `${row.id}-contract`,
+        summary: row,
+        subcontractors: []
+      };
+
+      projectEntry.contracts.push(contractEntry);
+      contractMap.set(row.id, contractEntry);
+    });
+
+    summaryData.forEach((row) => {
+      if (row.rowType === 'subcontractor') {
+        const contractEntry = contractMap.get(row.parentSummaryId);
+        if (contractEntry) {
+          contractEntry.subcontractors.push(row);
+        }
+      }
+    });
+
+    return Array.from(projectMap.values());
+  }, [summaryData]);
+
+  useEffect(() => {
+    if (!projectHierarchy.length) {
+      setExpandedProjects(new Set());
+      setExpandedContracts(new Set());
+      return;
+    }
+
+    const projectIds = new Set(projectHierarchy.map((project) => project.id));
+    const contractIds = new Set();
+
+    projectHierarchy.forEach((project) => {
+      project.contracts.forEach((contract) => {
+        contractIds.add(contract.id);
+      });
+    });
+
+    setExpandedProjects(projectIds);
+    setExpandedContracts(contractIds);
+  }, [projectHierarchy]);
+
+  const toggleProject = useCallback((projectId) => {
+    setExpandedProjects((prev) => {
       const next = new Set(prev);
-      if (next.has(rowId)) {
-        next.delete(rowId);
+      if (next.has(projectId)) {
+        next.delete(projectId);
       } else {
-        next.add(rowId);
+        next.add(projectId);
       }
       return next;
     });
   }, []);
 
-  const summaryGridRows = useMemo(() => {
-    if (!summaryData || summaryData.length === 0) {
-      return [];
-    }
-
-    const rows = [];
-    summaryData.forEach((row) => {
-      rows.push(row);
-
-      if (expandedSummaryRows.has(row.id) && row.subcontractors?.length) {
-        rows.push({
-          ...row,
-          id: `${row.id}-detail`,
-          isDetailRow: true,
-          parentRow: row
-        });
+  const toggleContract = useCallback((contractId) => {
+    setExpandedContracts((prev) => {
+      const next = new Set(prev);
+      if (next.has(contractId)) {
+        next.delete(contractId);
+      } else {
+        next.add(contractId);
       }
+      return next;
     });
+  }, []);
 
-    // Calculate Total row with aggregated values
-    const total = {
-      id: 'total-row',
-      contractScope: 'Total',
-      projectScope: '',
-      contractor: '',
-      originalContractAmount: 0,
-      changeOrders: 0,
-      adjustedContractAmount: 0,
-      paidToDateAmount: 0,
-      paidToDatePercent: 0,
-      isTotalRow: true
-    };
+  const displayRows = useMemo(() => {
+    const rows = [];
 
-    // Aggregate values from all summary rows
-    summaryData.forEach(row => {
-      total.originalContractAmount += Number(row.originalContractAmount) || 0;
-      total.changeOrders += Number(row.changeOrders) || 0;
-      total.adjustedContractAmount += Number(row.adjustedContractAmount) || 0;
-      total.paidToDateAmount += Number(row.paidToDateAmount) || 0;
+    projectHierarchy.forEach((project) => {
+      rows.push({
+        id: project.id,
+        rowType: 'projectGroup',
+        projectScope: project.label,
+        hasChildren: project.contracts.length > 0
+      });
+
+      if (!expandedProjects.has(project.id)) {
+        return;
+      }
+
+      project.contracts.forEach((contract) => {
+        rows.push({
+          ...contract.summary,
+          id: contract.id,
+          rowType: 'contractGroup',
+          hasChildren: contract.subcontractors.length > 0
+        });
+
+        if (!expandedContracts.has(contract.id)) {
+          return;
+        }
+
+        contract.subcontractors.forEach((sub) => {
+          rows.push({
+            ...sub,
+            hasChildren: false
+          });
+        });
+      });
     });
-
-    // Calculate average percentage
-    if (total.adjustedContractAmount > 0) {
-      total.paidToDatePercent = (total.paidToDateAmount / total.adjustedContractAmount) * 100;
-    }
-
-    // Append Total row
-    rows.push(total);
 
     return rows;
-  }, [summaryData, expandedSummaryRows]);
+  }, [projectHierarchy, expandedProjects, expandedContracts]);
 
-  const summaryColumnDefs = useMemo(() => {
-    const columns = [
-      {
-        field: 'contractScope',
-        headerName: 'Contract# / Scope',
-        minWidth: 200,
-        cellRenderer: ContractScopeCellRenderer
-      },
-      {
-        field: 'projectScope',
-        headerName: 'Project Scope',
-        minWidth: 180,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.projectScope)
-      },
-      {
-        field: 'contractor',
-        headerName: 'Contractor, Ward, County & State',
-        minWidth: 220,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.contractor)
-      },
-      {
-        field: 'originalContractAmount',
-        headerName: 'Original Contract Amount',
-        minWidth: 170,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.originalContractAmount),
-        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
-      },
-      {
-        field: 'changeOrders',
-        headerName: 'Change Orders',
-        minWidth: 150,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.changeOrders),
-        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
-      },
-      {
-        field: 'adjustedContractAmount',
-        headerName: 'Adjusted Contract Amount',
-        minWidth: 170,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.adjustedContractAmount),
-        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
-      },
-      {
-        field: 'paidToDateAmount',
-        headerName: 'Paid To Date Amount',
-        minWidth: 160,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.paidToDateAmount),
-        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
-      },
-      {
-        field: 'paidToDatePercent',
-        headerName: '%',
-        width: 90,
-        valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.paidToDatePercent),
-        valueFormatter: ({ value }) => value ? formatPercent(value, 1) : ''
-      }
-    ];
+  const getRowStyle = useCallback((params) => {
+    const { data } = params;
+    if (!data) return null;
 
-    columns[0].colSpan = (params) => (params.data?.isDetailRow ? columns.length : 1);
-
-    return columns;
-  }, []);
-
-  const getSummaryRowHeight = useCallback((params) => {
-    if (!params.data?.isDetailRow) {
-      return undefined;
+    if (data.rowType === 'projectGroup') {
+      return {
+        background: 'rgba(142, 169, 78, 0.15)',
+        fontWeight: 700
+      };
     }
-    return DETAIL_GRID_HEIGHT + DETAIL_ROW_PADDING;
+
+    if (data.rowType === 'contractGroup') {
+      return {
+        background: 'rgba(142, 169, 78, 0.08)',
+        fontWeight: 600
+      };
+    }
+
+    if (data.rowType === 'summary') {
+      return {
+        background: 'rgba(142, 169, 78, 0.06)',
+        fontWeight: 600
+      };
+    }
+
+    return null;
   }, []);
 
-  const gridContext = useMemo(() => ({
-    toggleSummaryRow,
-    expandedSummaryRows,
-    subcontractorColumnDefs,
-    getSubcontractorRowStyle,
-    onGridReady,
-    gridOptions
-  }), [toggleSummaryRow, expandedSummaryRows, getSubcontractorRowStyle, onGridReady, gridOptions]);
 
   const bottomCardsContainerStyle = useMemo(() => {
     if (isMobile) {
@@ -684,14 +769,13 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
       return;
     }
 
-    const { summaryRows, subcontractorRows } = generateAggregateReportData({
+    const mergedRows = generateAggregateReportData({
       selectedProjectNumbers: filters.projects,
       selectedContractNumbers: filters.contracts
     });
 
-    setSummaryData(summaryRows);
-    setSubcontractorData(subcontractorRows);
-    setExpandedSummaryRows(summaryRows.length > 0 ? new Set([summaryRows[0].id]) : new Set());
+    setSummaryData(mergedRows);
+    setSubcontractorData(mergedRows.filter((row) => row.rowType === 'subcontractor'));
     setAppliedFilters(filters);
     setShowFilters(false);
     setShowFilterDetails(false);
@@ -1300,7 +1384,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
           <div className="ag-theme-balham" style={{ width: '100%' }}>
             <AgGridReact
               gridOptions={gridOptions}
-              rowData={summaryGridRows}
+              rowData={displayRows}
               columnDefs={summaryColumnDefs}
               defaultColDef={{
                 resizable: true,
@@ -1311,9 +1395,13 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
               suppressCellFocus={true}
               onGridReady={onGridReady}
               domLayout='autoHeight'
-              getRowHeight={getSummaryRowHeight}
-              getRowStyle={getSummaryRowStyle}
-              context={gridContext}
+              getRowStyle={getRowStyle}
+              context={{
+                expandedProjects,
+                expandedContracts,
+                toggleProject,
+                toggleContract
+              }}
             />
           </div>
         </div>

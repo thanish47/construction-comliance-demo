@@ -167,15 +167,25 @@ export const generateAggregateReportData = ({
     return buildSummaryRow(contract, project, index);
   });
 
-  const subcontractorRows = summaryRows.flatMap((row) =>
-    row.subcontractors.map((subRow) => ({
-      ...subRow,
-      parentSummaryId: row.id
-    }))
-  );
+  const mergedRows = summaryRows.flatMap((row) => {
+    const { subcontractors, ...summaryFields } = row;
 
-  return {
-    summaryRows,
-    subcontractorRows
-  };
+    const summaryEntry = {
+      ...summaryFields,
+      rowType: 'summary',
+      parentSummaryId: row.id
+    };
+
+    const subcontractorEntries = subcontractors.map((subRow) => ({
+      ...subRow,
+      projectScope: summaryFields.projectScope,
+      contractScope: summaryFields.contractScope,
+      parentSummaryId: row.id,
+      rowType: 'subcontractor'
+    }));
+
+    return [summaryEntry, ...subcontractorEntries];
+  });
+
+  return mergedRows;
 };

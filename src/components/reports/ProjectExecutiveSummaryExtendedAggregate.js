@@ -256,26 +256,26 @@ const ContractScopeCellRenderer = (params) => {
 const subcontractorColumnDefs = [
   { field: 'subContractor', headerName: 'Sub Contractor, Ward, County & State', minWidth: 210 },
   { field: 'certificationAgency', headerName: 'Certification Agency', minWidth: 160 },
-  { field: 'lbeAdjusted', headerName: 'LBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'lbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'mbeAdjusted', headerName: 'MBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'mbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'wbeAdjusted', headerName: 'WBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'wbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'sbeAdjusted', headerName: 'SBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'sbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'vbeAdjusted', headerName: 'VBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'vbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1) },
-  { field: 'lbePaidToDate', headerName: 'LBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'lbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
-  { field: 'mbePaidToDate', headerName: 'MBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'mbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
-  { field: 'wbePaidToDate', headerName: 'WBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'wbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
-  { field: 'sbePaidToDate', headerName: 'SBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'sbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) },
-  { field: 'vbePaidToDate', headerName: 'VBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value) },
-  { field: 'vbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2) }
+  { field: 'lbeAdjusted', headerName: 'LBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'lbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1), cellStyle: { textAlign: 'right' } },
+  { field: 'mbeAdjusted', headerName: 'MBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'mbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1), cellStyle: { textAlign: 'right' } },
+  { field: 'wbeAdjusted', headerName: 'WBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'wbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1), cellStyle: { textAlign: 'right' } },
+  { field: 'sbeAdjusted', headerName: 'SBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'sbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1), cellStyle: { textAlign: 'right' } },
+  { field: 'vbeAdjusted', headerName: 'VBE Adjusted', minWidth: 130, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'vbeAdjustedPercent', headerName: '%', width: 80, valueFormatter: percentFormatter(1), cellStyle: { textAlign: 'right' } },
+  { field: 'lbePaidToDate', headerName: 'LBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'lbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2), cellStyle: { textAlign: 'right' } },
+  { field: 'mbePaidToDate', headerName: 'MBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'mbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2), cellStyle: { textAlign: 'right' } },
+  { field: 'wbePaidToDate', headerName: 'WBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'wbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2), cellStyle: { textAlign: 'right' } },
+  { field: 'sbePaidToDate', headerName: 'SBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'sbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2), cellStyle: { textAlign: 'right' } },
+  { field: 'vbePaidToDate', headerName: 'VBE Paid To Date', minWidth: 140, valueFormatter: ({ value }) => formatCurrency(value), cellStyle: { textAlign: 'right' } },
+  { field: 'vbePaidToDatePercent', headerName: '%', width: 80, valueFormatter: percentFormatter(2), cellStyle: { textAlign: 'right' } }
 ];
 
 const ProjectExecutiveSummaryExtendedAggregate = () => {
@@ -542,35 +542,40 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
         headerName: 'Original Contract Amount',
         minWidth: 170,
         valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.originalContractAmount),
-        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+        valueFormatter: ({ value }) => value ? formatCurrency(value) : '',
+        cellStyle: { textAlign: 'right' }
       },
       {
         field: 'changeOrders',
         headerName: 'Change Orders',
         minWidth: 150,
         valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.changeOrders),
-        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+        valueFormatter: ({ value }) => value ? formatCurrency(value) : '',
+        cellStyle: { textAlign: 'right' }
       },
       {
         field: 'adjustedContractAmount',
         headerName: 'Adjusted Contract Amount',
         minWidth: 170,
         valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.adjustedContractAmount),
-        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+        valueFormatter: ({ value }) => value ? formatCurrency(value) : '',
+        cellStyle: { textAlign: 'right' }
       },
       {
         field: 'paidToDateAmount',
         headerName: 'Paid To Date Amount',
         minWidth: 160,
         valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.paidToDateAmount),
-        valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
+        valueFormatter: ({ value }) => value ? formatCurrency(value) : '',
+        cellStyle: { textAlign: 'right' }
       },
       {
         field: 'paidToDatePercent',
         headerName: '%',
         width: 90,
         valueGetter: (params) => (params.data?.isDetailRow ? '' : params.data?.paidToDatePercent),
-        valueFormatter: ({ value }) => value ? formatPercent(value, 1) : ''
+        valueFormatter: ({ value }) => value ? formatPercent(value, 1) : '',
+        cellStyle: { textAlign: 'right' }
       }
     ];
 
@@ -729,7 +734,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
           draggable: true
         });
 
-        const doc = new jsPDF('l', 'pt', 'a4'); // landscape, points, A4 size
+        const doc = new jsPDF('l', 'pt', 'a3'); // landscape, points, A3 size
         const pageHeight = doc.internal.pageSize.getHeight();
         const margin = 40;
         let yPosition = margin;
@@ -749,82 +754,181 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
         doc.text(`Date Range: ${appliedFilters.startDate || 'Any'} – ${appliedFilters.endDate || 'Any'}`, margin, yPosition);
         yPosition += 25;
 
-        // Add main data table
-        doc.setFontSize(12);
-        doc.setTextColor(27, 94, 32);
-        doc.text('Project Summary', margin, yPosition);
-        yPosition += 15;
+        // Loop through each contract and add its summary + subcontractors
+        summaryData.forEach((contract, index) => {
+          // Always start each contract on a new page (except the first one)
+          if (index > 0) {
+            doc.addPage();
+            yPosition = margin;
+          }
 
-        // Prepare table data from displayRows
-        const tableData = displayRows.map(row => {
-          const indent = row.rowType === 'projectGroup' ? '' : row.rowType === 'contractGroup' ? '  ' : '    ';
-          const label = row.rowType === 'projectGroup'
-            ? row.projectScope
-            : row.rowType === 'contractGroup'
-              ? row.contractScope
-              : row.subContractor || row.contractScope || row.projectScope;
+          // Add contract header
+          doc.setFontSize(12);
+          doc.setTextColor(27, 94, 32);
+          doc.text(`Contract ${index + 1}: ${contract.contractScope || 'N/A'}`, margin, yPosition);
+          yPosition += 15;
 
-          return [
-            indent + label,
-            row.originalContractAmount ? formatCurrency(row.originalContractAmount) : '',
-            row.adjustedContractAmount ? formatCurrency(row.adjustedContractAmount) : '',
-            row.paidToDateAmount ? formatCurrency(row.paidToDateAmount) : '',
-            row.paidToDatePercent ? formatPercent(row.paidToDatePercent) : '',
-            row.lbeAdjusted ? formatCurrency(row.lbeAdjusted) : '',
-            row.mbeAdjusted ? formatCurrency(row.mbeAdjusted) : '',
-            row.wbeAdjusted ? formatCurrency(row.wbeAdjusted) : ''
-          ];
-        });
+          // Add contract summary table
+          doc.setFontSize(10);
+          doc.setTextColor(74, 124, 89);
+          doc.text('Contract Summary', margin, yPosition);
+          yPosition += 10;
 
-        autoTable(doc, {
-          startY: yPosition,
-          head: [['Project/Contract/Subcontractor', 'Original Amount', 'Adjusted Amount', 'Paid To Date', '% Paid', 'LBE', 'MBE', 'WBE']],
-          body: tableData,
-          theme: 'grid',
-          headStyles: {
-            fillColor: [142, 169, 78],
-            textColor: [255, 255, 255],
-            fontSize: 8,
-            fontStyle: 'bold'
-          },
-          bodyStyles: {
-            fontSize: 7,
-            textColor: [45, 74, 31]
-          },
-          alternateRowStyles: {
-            fillColor: [245, 247, 242]
-          },
-          margin: { left: margin, right: margin },
-          styles: {
-            cellPadding: 4,
-            overflow: 'linebreak',
-            cellWidth: 'wrap'
-          },
-          columnStyles: {
-            0: { cellWidth: 140 },
-            1: { cellWidth: 70, halign: 'right' },
-            2: { cellWidth: 70, halign: 'right' },
-            3: { cellWidth: 70, halign: 'right' },
-            4: { cellWidth: 50, halign: 'right' },
-            5: { cellWidth: 70, halign: 'right' },
-            6: { cellWidth: 70, halign: 'right' },
-            7: { cellWidth: 70, halign: 'right' }
-          },
-          didParseCell: function(data) {
-            const row = displayRows[data.row.index];
-            if (row) {
-              if (row.rowType === 'grandTotal') {
-                data.cell.styles.fillColor = [142, 169, 78];
-                data.cell.styles.textColor = [255, 255, 255];
-                data.cell.styles.fontStyle = 'bold';
-              } else if (row.rowType === 'projectGroup') {
-                data.cell.styles.fillColor = [142, 169, 78, 0.15 * 255];
-                data.cell.styles.fontStyle = 'bold';
-              } else if (row.rowType === 'contractGroup') {
-                data.cell.styles.fillColor = [142, 169, 78, 0.08 * 255];
-                data.cell.styles.fontStyle = 'bold';
-              }
+          const contractSummaryData = [[
+            contract.projectScope || '',
+            contract.contractor || '',
+            contract.originalContractAmount ? formatCurrency(contract.originalContractAmount) : '',
+            contract.changeOrders ? formatCurrency(contract.changeOrders) : '',
+            contract.adjustedContractAmount ? formatCurrency(contract.adjustedContractAmount) : '',
+            contract.paidToDateAmount ? formatCurrency(contract.paidToDateAmount) : '',
+            contract.paidToDatePercent ? formatPercent(contract.paidToDatePercent, 1) : ''
+          ]];
+
+          autoTable(doc, {
+            startY: yPosition,
+            head: [['Project Scope', 'Contractor', 'Original Amount', 'Change Orders', 'Adjusted Amount', 'Paid To Date', '% Paid']],
+            body: contractSummaryData,
+            theme: 'grid',
+            headStyles: {
+              fillColor: [142, 169, 78],
+              textColor: [255, 255, 255],
+              fontSize: 9,
+              fontStyle: 'bold'
+            },
+            bodyStyles: {
+              fontSize: 8,
+              textColor: [45, 74, 31]
+            },
+            margin: { left: margin, right: margin },
+            styles: {
+              cellPadding: 6,
+              overflow: 'linebreak',
+              cellWidth: 'wrap'
+            },
+            columnStyles: {
+              0: { cellWidth: 200 },
+              1: { cellWidth: 200 },
+              2: { cellWidth: 140, halign: 'right' },
+              3: { cellWidth: 120, halign: 'right' },
+              4: { cellWidth: 140, halign: 'right' },
+              5: { cellWidth: 140, halign: 'right' },
+              6: { cellWidth: 100, halign: 'right' }
             }
+          });
+
+          yPosition = doc.lastAutoTable.finalY + 15;
+
+          // Add subcontractors for this contract
+          const contractSubcontractors = contract.subcontractors || [];
+
+          if (contractSubcontractors.length > 0) {
+            // Check if we need a new page for subcontractors
+            if (yPosition > pageHeight - 150) {
+              doc.addPage();
+              yPosition = margin;
+            }
+
+            doc.setFontSize(10);
+            doc.setTextColor(74, 124, 89);
+            doc.text('Subcontractor Details', margin, yPosition);
+            yPosition += 10;
+
+            // Prepare subcontractor table data for this contract with all columns
+            const subcontractorTableData = contractSubcontractors.map(sub => [
+              sub.subContractor || '',
+              sub.certificationAgency || '',
+              sub.lbeAdjusted ? formatCurrency(sub.lbeAdjusted) : '',
+              sub.lbeAdjustedPercent ? formatPercent(sub.lbeAdjustedPercent, 1) : '',
+              sub.mbeAdjusted ? formatCurrency(sub.mbeAdjusted) : '',
+              sub.mbeAdjustedPercent ? formatPercent(sub.mbeAdjustedPercent, 1) : '',
+              sub.wbeAdjusted ? formatCurrency(sub.wbeAdjusted) : '',
+              sub.wbeAdjustedPercent ? formatPercent(sub.wbeAdjustedPercent, 1) : '',
+              sub.sbeAdjusted ? formatCurrency(sub.sbeAdjusted) : '',
+              sub.sbeAdjustedPercent ? formatPercent(sub.sbeAdjustedPercent, 1) : '',
+              sub.vbeAdjusted ? formatCurrency(sub.vbeAdjusted) : '',
+              sub.vbeAdjustedPercent ? formatPercent(sub.vbeAdjustedPercent, 1) : '',
+              sub.lbePaidToDate ? formatCurrency(sub.lbePaidToDate) : '',
+              sub.lbePaidToDatePercent ? formatPercent(sub.lbePaidToDatePercent, 2) : '',
+              sub.mbePaidToDate ? formatCurrency(sub.mbePaidToDate) : '',
+              sub.mbePaidToDatePercent ? formatPercent(sub.mbePaidToDatePercent, 2) : '',
+              sub.wbePaidToDate ? formatCurrency(sub.wbePaidToDate) : '',
+              sub.wbePaidToDatePercent ? formatPercent(sub.wbePaidToDatePercent, 2) : '',
+              sub.sbePaidToDate ? formatCurrency(sub.sbePaidToDate) : '',
+              sub.sbePaidToDatePercent ? formatPercent(sub.sbePaidToDatePercent, 2) : '',
+              sub.vbePaidToDate ? formatCurrency(sub.vbePaidToDate) : '',
+              sub.vbePaidToDatePercent ? formatPercent(sub.vbePaidToDatePercent, 2) : ''
+            ]);
+
+            autoTable(doc, {
+              startY: yPosition,
+              head: [[
+                'Subcontractor',
+                'Cert. Agency',
+                'LBE Adjusted', '%',
+                'MBE Adjusted', '%',
+                'WBE Adjusted', '%',
+                'SBE Adjusted', '%',
+                'VBE Adjusted', '%',
+                'LBE Paid', '%',
+                'MBE Paid', '%',
+                'WBE Paid', '%',
+                'SBE Paid', '%',
+                'VBE Paid', '%'
+              ]],
+              body: subcontractorTableData,
+              theme: 'grid',
+              headStyles: {
+                fillColor: [142, 169, 78],
+                textColor: [255, 255, 255],
+                fontSize: 7,
+                fontStyle: 'bold'
+              },
+              bodyStyles: {
+                fontSize: 7,
+                textColor: [45, 74, 31]
+              },
+              alternateRowStyles: {
+                fillColor: [245, 247, 242]
+              },
+              margin: { left: 12, right: 20 },
+              styles: {
+                cellPadding: 2,
+                overflow: 'linebreak',
+                cellWidth: 'wrap',
+                minCellHeight: 12
+              },
+              columnStyles: {
+                0: { cellWidth: 120 },  // Subcontractor
+                1: { cellWidth: 95 },   // Cert. Agency
+                2: { cellWidth: 62, halign: 'right' },  // LBE Adjusted
+                3: { cellWidth: 33, halign: 'right' },  // %
+                4: { cellWidth: 62, halign: 'right' },  // MBE Adjusted
+                5: { cellWidth: 33, halign: 'right' },  // %
+                6: { cellWidth: 62, halign: 'right' },  // WBE Adjusted
+                7: { cellWidth: 33, halign: 'right' },  // %
+                8: { cellWidth: 62, halign: 'right' },  // SBE Adjusted
+                9: { cellWidth: 33, halign: 'right' },  // %
+                10: { cellWidth: 62, halign: 'right' }, // VBE Adjusted
+                11: { cellWidth: 33, halign: 'right' }, // %
+                12: { cellWidth: 62, halign: 'right' }, // LBE Paid
+                13: { cellWidth: 33, halign: 'right' }, // %
+                14: { cellWidth: 62, halign: 'right' }, // MBE Paid
+                15: { cellWidth: 33, halign: 'right' }, // %
+                16: { cellWidth: 62, halign: 'right' }, // WBE Paid
+                17: { cellWidth: 33, halign: 'right' }, // %
+                18: { cellWidth: 62, halign: 'right' }, // SBE Paid
+                19: { cellWidth: 33, halign: 'right' }, // %
+                20: { cellWidth: 62, halign: 'right' }, // VBE Paid
+                21: { cellWidth: 33, halign: 'right' }  // %
+              }
+            });
+
+            yPosition = doc.lastAutoTable.finalY + 20;
+          } else {
+            doc.setFontSize(9);
+            doc.setTextColor(100, 100, 100);
+            doc.text('No subcontractors for this contract', margin, yPosition);
+            yPosition += 20;
           }
         });
 
@@ -1312,9 +1416,10 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                   Step 2: Select Projects {filters.projects.length > 0 && `(${filters.projects.length} selected)`}
                 </label>
                 <div style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
+                  display: isMobile ? 'flex' : 'grid',
+                  flexDirection: isMobile ? 'row' : undefined,
+                  flexWrap: isMobile ? 'wrap' : undefined,
+                  gridTemplateColumns: isMobile ? undefined : 'repeat(3, 1fr)',
                   gap: '10px',
                   maxHeight: 'calc(3 * 40px + 2 * 10px)',
                   overflowY: 'auto',
@@ -1377,9 +1482,10 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                   Step 3: Select Contracts {filters.contracts.length > 0 && `(${filters.contracts.length} selected)`}
                 </label>
                 <div style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
+                  display: isMobile ? 'flex' : 'grid',
+                  flexDirection: isMobile ? 'row' : undefined,
+                  flexWrap: isMobile ? 'wrap' : undefined,
+                  gridTemplateColumns: isMobile ? undefined : 'repeat(3, 1fr)',
                   gap: '10px',
                   maxHeight: 'calc(3 * 40px + 2 * 10px)',
                   overflowY: 'auto',

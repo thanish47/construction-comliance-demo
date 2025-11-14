@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const CreateContactForm = ({ onClose, onSubmit, projectNumber }) => {
   const [formData, setFormData] = useState({
@@ -14,6 +14,20 @@ const CreateContactForm = ({ onClose, onSubmit, projectNumber }) => {
     fax: '',
     comments: ''
   });
+
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth <= 767;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 767);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,9 +107,12 @@ const CreateContactForm = ({ onClose, onSubmit, projectNumber }) => {
   };
 
   const footerStyle = {
-    paddingTop: '5px',
+    padding: isMobile ? '15px 20px' : '5px 20px 20px',
     position: 'sticky',
-    bottom: 0
+    bottom: 0,
+    backdropFilter: 'blur(8px)',
+    WebkitBackdropFilter: 'blur(8px)',
+    zIndex: 10
   };
 
   return (

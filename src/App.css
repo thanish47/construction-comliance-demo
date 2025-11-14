@@ -158,7 +158,8 @@ header {
     -webkit-backdrop-filter: blur(15px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.25);
     box-shadow:
-        0 4px 16px rgba(0, 0, 0, 0.08),
+        0 2px 8px -1px rgba(0, 0, 0, 0.1),
+        0 4px 16px 0 rgba(0, 0, 0, 0.08),
         inset 0 1px 1px rgba(255, 255, 255, 0.3);
     padding: 0 15px;
     overflow: visible;
@@ -724,15 +725,15 @@ main {
 
 .content-container {
     margin: 0 auto;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    box-shadow:
+    /* background: rgba(255, 255, 255, 0.5); */
+    /* backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); */
+    /* border-radius: 20px; */
+    /* border: 1px solid rgba(255, 255, 255, 0.3); */
+    /* box-shadow:
         0 8px 32px 0 rgba(31, 38, 135, 0.15),
-        inset 0 1px 1px rgba(255, 255, 255, 0.4);
-    padding: 15px;
+        inset 0 1px 1px rgba(255, 255, 255, 0.4); */
+    /* padding: 15px; */
 }
 
 /* AG Grid scrollbar styling - always visible */
@@ -805,20 +806,28 @@ main {
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    padding: 10px;
+    gap: 24px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .chart-container {
     width: 100%;
     overflow: hidden;
+    position: relative;
+}
+
+.chart-container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(142, 169, 78, 0.2) !important;
 }
 
 .page-title {
     font-size: 24px;
     color: var(--color-accent);
     font-weight: 700;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
     text-shadow:
         2px 2px 6px rgba(255, 255, 255, 0.9),
         0 0 12px rgba(255, 255, 255, 0.6);
@@ -1236,7 +1245,7 @@ main {
     }
 
     .content-container {
-        padding: 15px;
+        /* padding: 15px; */
     }
 
     .dashboard-grid {
@@ -1449,8 +1458,8 @@ main {
 }
 .grid-card {
     background: rgba(255, 255, 255, 0.95);
-    border-radius: 18px;
-    padding: 18px;
+    border-radius: 12px;
+    padding: 12px;
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(74, 124, 89, 0.1);
     backdrop-filter: blur(6px);

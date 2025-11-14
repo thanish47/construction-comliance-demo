@@ -337,35 +337,70 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
       field: 'originalContractAmount',
       headerName: 'Original Contract Amount',
       minWidth: 170,
-      valueGetter: createFieldGetter('originalContractAmount', 'contractGroup'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'grandTotal') {
+          return data.originalContractAmount;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'changeOrders',
       headerName: 'Change Orders',
       minWidth: 150,
-      valueGetter: createFieldGetter('changeOrders', 'contractGroup'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'grandTotal') {
+          return data.changeOrders;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'adjustedContractAmount',
       headerName: 'Adjusted Contract Amount',
       minWidth: 170,
-      valueGetter: createFieldGetter('adjustedContractAmount', 'contractGroup'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'grandTotal') {
+          return data.adjustedContractAmount;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'paidToDateAmount',
       headerName: 'Paid To Date Amount',
       minWidth: 160,
-      valueGetter: createFieldGetter('paidToDateAmount', 'contractGroup'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'grandTotal') {
+          return data.paidToDateAmount;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'paidToDatePercent',
       headerName: '% Paid',
       width: 110,
-      valueGetter: createFieldGetter('paidToDatePercent', 'contractGroup'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'grandTotal') {
+          return data.paidToDatePercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(1)
     },
     {
@@ -378,140 +413,280 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
       field: 'lbeAdjusted',
       headerName: 'LBE Adjusted',
       minWidth: 130,
-      valueGetter: createFieldGetter('lbeAdjusted', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.lbeAdjusted;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'lbeAdjustedPercent',
       headerName: 'LBE %',
       width: 90,
-      valueGetter: createFieldGetter('lbeAdjustedPercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.lbeAdjustedPercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(1)
     },
     {
       field: 'mbeAdjusted',
       headerName: 'MBE Adjusted',
       minWidth: 130,
-      valueGetter: createFieldGetter('mbeAdjusted', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.mbeAdjusted;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'mbeAdjustedPercent',
       headerName: 'MBE %',
       width: 90,
-      valueGetter: createFieldGetter('mbeAdjustedPercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.mbeAdjustedPercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(1)
     },
     {
       field: 'wbeAdjusted',
       headerName: 'WBE Adjusted',
       minWidth: 130,
-      valueGetter: createFieldGetter('wbeAdjusted', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.wbeAdjusted;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'wbeAdjustedPercent',
       headerName: 'WBE %',
       width: 90,
-      valueGetter: createFieldGetter('wbeAdjustedPercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.wbeAdjustedPercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(1)
     },
     {
       field: 'sbeAdjusted',
       headerName: 'SBE Adjusted',
       minWidth: 130,
-      valueGetter: createFieldGetter('sbeAdjusted', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.sbeAdjusted;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'sbeAdjustedPercent',
       headerName: 'SBE %',
       width: 90,
-      valueGetter: createFieldGetter('sbeAdjustedPercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.sbeAdjustedPercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(1)
     },
     {
       field: 'vbeAdjusted',
       headerName: 'VBE Adjusted',
       minWidth: 130,
-      valueGetter: createFieldGetter('vbeAdjusted', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.vbeAdjusted;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'vbeAdjustedPercent',
       headerName: 'VBE %',
       width: 90,
-      valueGetter: createFieldGetter('vbeAdjustedPercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.vbeAdjustedPercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(1)
     },
     {
       field: 'lbePaidToDate',
       headerName: 'LBE Paid To Date',
       minWidth: 140,
-      valueGetter: createFieldGetter('lbePaidToDate', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.lbePaidToDate;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'lbePaidToDatePercent',
       headerName: 'LBE Paid %',
       width: 110,
-      valueGetter: createFieldGetter('lbePaidToDatePercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.lbePaidToDatePercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(2)
     },
     {
       field: 'mbePaidToDate',
       headerName: 'MBE Paid To Date',
       minWidth: 140,
-      valueGetter: createFieldGetter('mbePaidToDate', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.mbePaidToDate;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'mbePaidToDatePercent',
       headerName: 'MBE Paid %',
       width: 110,
-      valueGetter: createFieldGetter('mbePaidToDatePercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.mbePaidToDatePercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(2)
     },
     {
       field: 'wbePaidToDate',
       headerName: 'WBE Paid To Date',
       minWidth: 140,
-      valueGetter: createFieldGetter('wbePaidToDate', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.wbePaidToDate;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'wbePaidToDatePercent',
       headerName: 'WBE Paid %',
       width: 110,
-      valueGetter: createFieldGetter('wbePaidToDatePercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.wbePaidToDatePercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(2)
     },
     {
       field: 'sbePaidToDate',
       headerName: 'SBE Paid To Date',
       minWidth: 140,
-      valueGetter: createFieldGetter('sbePaidToDate', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.sbePaidToDate;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'sbePaidToDatePercent',
       headerName: 'SBE Paid %',
       width: 110,
-      valueGetter: createFieldGetter('sbePaidToDatePercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.sbePaidToDatePercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(2)
     },
     {
       field: 'vbePaidToDate',
       headerName: 'VBE Paid To Date',
       minWidth: 140,
-      valueGetter: createFieldGetter('vbePaidToDate', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.vbePaidToDate;
+        }
+        return null;
+      },
       valueFormatter: ({ value }) => value ? formatCurrency(value) : ''
     },
     {
       field: 'vbePaidToDatePercent',
       headerName: 'VBE Paid %',
       width: 110,
-      valueGetter: createFieldGetter('vbePaidToDatePercent', 'subcontractor'),
+      valueGetter: (params) => {
+        const data = params.data;
+        if (!data) return null;
+        if (data.rowType === 'projectGroup' || data.rowType === 'contractGroup' || data.rowType === 'subcontractor' || data.rowType === 'grandTotal') {
+          return data.vbePaidToDatePercent;
+        }
+        return null;
+      },
       valueFormatter: percentFormatter(2)
     }
   ], []);
@@ -611,12 +786,72 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
   const displayRows = useMemo(() => {
     const rows = [];
 
+    // Helper to calculate sum of numeric values
+    const sumField = (items, field) => {
+      return items.reduce((sum, item) => {
+        const value = Number(item[field]);
+        return sum + (Number.isFinite(value) ? value : 0);
+      }, 0);
+    };
+
+    // Helper to calculate weighted average percentage
+    const calcWeightedPercent = (totalAmount, items, amountField, percentField) => {
+      if (!totalAmount || totalAmount === 0) return 0;
+      const weightedSum = items.reduce((sum, item) => {
+        const amount = Number(item[amountField]);
+        const percent = Number(item[percentField]);
+        if (Number.isFinite(amount) && Number.isFinite(percent)) {
+          return sum + (amount * percent / 100);
+        }
+        return sum;
+      }, 0);
+      return (weightedSum / totalAmount) * 100;
+    };
+
     projectHierarchy.forEach((project) => {
+      // Calculate project-level totals from all contracts
+      const allContracts = project.contracts.map(c => c.summary);
+      const projectTotals = {
+        originalContractAmount: sumField(allContracts, 'originalContractAmount'),
+        changeOrders: sumField(allContracts, 'changeOrders'),
+        adjustedContractAmount: sumField(allContracts, 'adjustedContractAmount'),
+        paidToDateAmount: sumField(allContracts, 'paidToDateAmount')
+      };
+      projectTotals.paidToDatePercent = projectTotals.adjustedContractAmount > 0
+        ? (projectTotals.paidToDateAmount / projectTotals.adjustedContractAmount) * 100
+        : 0;
+
+      // Calculate project-level subcontractor totals from all subcontractors
+      const allSubs = project.contracts.flatMap(c => c.subcontractors);
+      projectTotals.lbeAdjusted = sumField(allSubs, 'lbeAdjusted');
+      projectTotals.mbeAdjusted = sumField(allSubs, 'mbeAdjusted');
+      projectTotals.wbeAdjusted = sumField(allSubs, 'wbeAdjusted');
+      projectTotals.sbeAdjusted = sumField(allSubs, 'sbeAdjusted');
+      projectTotals.vbeAdjusted = sumField(allSubs, 'vbeAdjusted');
+      projectTotals.lbePaidToDate = sumField(allSubs, 'lbePaidToDate');
+      projectTotals.mbePaidToDate = sumField(allSubs, 'mbePaidToDate');
+      projectTotals.wbePaidToDate = sumField(allSubs, 'wbePaidToDate');
+      projectTotals.sbePaidToDate = sumField(allSubs, 'sbePaidToDate');
+      projectTotals.vbePaidToDate = sumField(allSubs, 'vbePaidToDate');
+
+      // Calculate weighted average percentages for project
+      projectTotals.lbeAdjustedPercent = calcWeightedPercent(projectTotals.lbeAdjusted, allSubs, 'lbeAdjusted', 'lbeAdjustedPercent');
+      projectTotals.mbeAdjustedPercent = calcWeightedPercent(projectTotals.mbeAdjusted, allSubs, 'mbeAdjusted', 'mbeAdjustedPercent');
+      projectTotals.wbeAdjustedPercent = calcWeightedPercent(projectTotals.wbeAdjusted, allSubs, 'wbeAdjusted', 'wbeAdjustedPercent');
+      projectTotals.sbeAdjustedPercent = calcWeightedPercent(projectTotals.sbeAdjusted, allSubs, 'sbeAdjusted', 'sbeAdjustedPercent');
+      projectTotals.vbeAdjustedPercent = calcWeightedPercent(projectTotals.vbeAdjusted, allSubs, 'vbeAdjusted', 'vbeAdjustedPercent');
+      projectTotals.lbePaidToDatePercent = calcWeightedPercent(projectTotals.lbePaidToDate, allSubs, 'lbePaidToDate', 'lbePaidToDatePercent');
+      projectTotals.mbePaidToDatePercent = calcWeightedPercent(projectTotals.mbePaidToDate, allSubs, 'mbePaidToDate', 'mbePaidToDatePercent');
+      projectTotals.wbePaidToDatePercent = calcWeightedPercent(projectTotals.wbePaidToDate, allSubs, 'wbePaidToDate', 'wbePaidToDatePercent');
+      projectTotals.sbePaidToDatePercent = calcWeightedPercent(projectTotals.sbePaidToDate, allSubs, 'sbePaidToDate', 'sbePaidToDatePercent');
+      projectTotals.vbePaidToDatePercent = calcWeightedPercent(projectTotals.vbePaidToDate, allSubs, 'vbePaidToDate', 'vbePaidToDatePercent');
+
       rows.push({
         id: project.id,
         rowType: 'projectGroup',
         projectScope: project.label,
-        hasChildren: project.contracts.length > 0
+        hasChildren: project.contracts.length > 0,
+        ...projectTotals
       });
 
       if (!expandedProjects.has(project.id)) {
@@ -624,8 +859,36 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
       }
 
       project.contracts.forEach((contract) => {
+        // Calculate contract-level totals from subcontractors
+        const subs = contract.subcontractors;
+        const contractTotals = {
+          lbeAdjusted: sumField(subs, 'lbeAdjusted'),
+          mbeAdjusted: sumField(subs, 'mbeAdjusted'),
+          wbeAdjusted: sumField(subs, 'wbeAdjusted'),
+          sbeAdjusted: sumField(subs, 'sbeAdjusted'),
+          vbeAdjusted: sumField(subs, 'vbeAdjusted'),
+          lbePaidToDate: sumField(subs, 'lbePaidToDate'),
+          mbePaidToDate: sumField(subs, 'mbePaidToDate'),
+          wbePaidToDate: sumField(subs, 'wbePaidToDate'),
+          sbePaidToDate: sumField(subs, 'sbePaidToDate'),
+          vbePaidToDate: sumField(subs, 'vbePaidToDate')
+        };
+
+        // Calculate weighted average percentages
+        contractTotals.lbeAdjustedPercent = calcWeightedPercent(contractTotals.lbeAdjusted, subs, 'lbeAdjusted', 'lbeAdjustedPercent');
+        contractTotals.mbeAdjustedPercent = calcWeightedPercent(contractTotals.mbeAdjusted, subs, 'mbeAdjusted', 'mbeAdjustedPercent');
+        contractTotals.wbeAdjustedPercent = calcWeightedPercent(contractTotals.wbeAdjusted, subs, 'wbeAdjusted', 'wbeAdjustedPercent');
+        contractTotals.sbeAdjustedPercent = calcWeightedPercent(contractTotals.sbeAdjusted, subs, 'sbeAdjusted', 'sbeAdjustedPercent');
+        contractTotals.vbeAdjustedPercent = calcWeightedPercent(contractTotals.vbeAdjusted, subs, 'vbeAdjusted', 'vbeAdjustedPercent');
+        contractTotals.lbePaidToDatePercent = calcWeightedPercent(contractTotals.lbePaidToDate, subs, 'lbePaidToDate', 'lbePaidToDatePercent');
+        contractTotals.mbePaidToDatePercent = calcWeightedPercent(contractTotals.mbePaidToDate, subs, 'mbePaidToDate', 'mbePaidToDatePercent');
+        contractTotals.wbePaidToDatePercent = calcWeightedPercent(contractTotals.wbePaidToDate, subs, 'wbePaidToDate', 'wbePaidToDatePercent');
+        contractTotals.sbePaidToDatePercent = calcWeightedPercent(contractTotals.sbePaidToDate, subs, 'sbePaidToDate', 'sbePaidToDatePercent');
+        contractTotals.vbePaidToDatePercent = calcWeightedPercent(contractTotals.vbePaidToDate, subs, 'vbePaidToDate', 'vbePaidToDatePercent');
+
         rows.push({
           ...contract.summary,
+          ...contractTotals,
           id: contract.id,
           rowType: 'contractGroup',
           hasChildren: contract.subcontractors.length > 0
@@ -644,12 +907,68 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
       });
     });
 
+    // Calculate grand totals from all project rows
+    if (rows.length > 0 && projectHierarchy.length > 0) {
+      const allProjects = rows.filter(r => r.rowType === 'projectGroup');
+      const grandTotals = {
+        originalContractAmount: sumField(allProjects, 'originalContractAmount'),
+        changeOrders: sumField(allProjects, 'changeOrders'),
+        adjustedContractAmount: sumField(allProjects, 'adjustedContractAmount'),
+        paidToDateAmount: sumField(allProjects, 'paidToDateAmount'),
+        lbeAdjusted: sumField(allProjects, 'lbeAdjusted'),
+        mbeAdjusted: sumField(allProjects, 'mbeAdjusted'),
+        wbeAdjusted: sumField(allProjects, 'wbeAdjusted'),
+        sbeAdjusted: sumField(allProjects, 'sbeAdjusted'),
+        vbeAdjusted: sumField(allProjects, 'vbeAdjusted'),
+        lbePaidToDate: sumField(allProjects, 'lbePaidToDate'),
+        mbePaidToDate: sumField(allProjects, 'mbePaidToDate'),
+        wbePaidToDate: sumField(allProjects, 'wbePaidToDate'),
+        sbePaidToDate: sumField(allProjects, 'sbePaidToDate'),
+        vbePaidToDate: sumField(allProjects, 'vbePaidToDate')
+      };
+
+      // Calculate percentages for grand totals
+      grandTotals.paidToDatePercent = grandTotals.adjustedContractAmount > 0
+        ? (grandTotals.paidToDateAmount / grandTotals.adjustedContractAmount) * 100
+        : 0;
+
+      // Get all subcontractors for weighted percentages
+      const allSubsForTotal = projectHierarchy.flatMap(p => p.contracts.flatMap(c => c.subcontractors));
+      grandTotals.lbeAdjustedPercent = calcWeightedPercent(grandTotals.lbeAdjusted, allSubsForTotal, 'lbeAdjusted', 'lbeAdjustedPercent');
+      grandTotals.mbeAdjustedPercent = calcWeightedPercent(grandTotals.mbeAdjusted, allSubsForTotal, 'mbeAdjusted', 'mbeAdjustedPercent');
+      grandTotals.wbeAdjustedPercent = calcWeightedPercent(grandTotals.wbeAdjusted, allSubsForTotal, 'wbeAdjusted', 'wbeAdjustedPercent');
+      grandTotals.sbeAdjustedPercent = calcWeightedPercent(grandTotals.sbeAdjusted, allSubsForTotal, 'sbeAdjusted', 'sbeAdjustedPercent');
+      grandTotals.vbeAdjustedPercent = calcWeightedPercent(grandTotals.vbeAdjusted, allSubsForTotal, 'vbeAdjusted', 'vbeAdjustedPercent');
+      grandTotals.lbePaidToDatePercent = calcWeightedPercent(grandTotals.lbePaidToDate, allSubsForTotal, 'lbePaidToDate', 'lbePaidToDatePercent');
+      grandTotals.mbePaidToDatePercent = calcWeightedPercent(grandTotals.mbePaidToDate, allSubsForTotal, 'mbePaidToDate', 'mbePaidToDatePercent');
+      grandTotals.wbePaidToDatePercent = calcWeightedPercent(grandTotals.wbePaidToDate, allSubsForTotal, 'wbePaidToDate', 'wbePaidToDatePercent');
+      grandTotals.sbePaidToDatePercent = calcWeightedPercent(grandTotals.sbePaidToDate, allSubsForTotal, 'sbePaidToDate', 'sbePaidToDatePercent');
+      grandTotals.vbePaidToDatePercent = calcWeightedPercent(grandTotals.vbePaidToDate, allSubsForTotal, 'vbePaidToDate', 'vbePaidToDatePercent');
+
+      rows.push({
+        id: 'grand-total',
+        rowType: 'grandTotal',
+        projectScope: 'TOTAL',
+        hasChildren: false,
+        ...grandTotals
+      });
+    }
+
     return rows;
   }, [projectHierarchy, expandedProjects, expandedContracts]);
 
   const getRowStyle = useCallback((params) => {
     const { data } = params;
     if (!data) return null;
+
+    if (data.rowType === 'grandTotal') {
+      return {
+        background: 'rgba(142, 169, 78, 0.3)',
+        fontWeight: 800,
+        borderTop: '3px solid rgba(142, 169, 78, 0.8)',
+        borderBottom: '3px solid rgba(142, 169, 78, 0.8)'
+      };
+    }
 
     if (data.rowType === 'projectGroup') {
       return {
@@ -1378,9 +1697,9 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
             marginBottom: '10px'
           }}
         >
-          <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#1b5e20', fontWeight: '600' }}>
+          {/* <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#1b5e20', fontWeight: '600' }}>
             Contract Summary
-          </h3>
+          </h3> */}
           <div className="ag-theme-balham" style={{ width: '100%' }}>
             <AgGridReact
               gridOptions={gridOptions}

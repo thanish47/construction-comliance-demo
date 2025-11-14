@@ -7,6 +7,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from 'recharts';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import html2canvas from 'html2canvas';
 import projectsData from '../../data/projects.json';
 import contractsData from '../../data/contracts.json';
 import { generateAggregateReportData } from '../../services/generateAggregateReportData';
@@ -172,6 +175,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
   const allContractOptions = useMemo(() => createContractOptions(contractsData), []);
   const gridOptions = useMemo(() => ({ theme: 'legacy' }), []);
   const exportDropdownRef = useRef(null);
+  const chartRef = useRef(null);
 
   const [filters, setFilters] = useState({
     client: '',
@@ -1114,17 +1118,230 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
     setShowFilters(true);
   };
 
-  const handleExport = (format) => {
+  const handleExport = async (format) => {
     setShowExportDropdown(false);
-    toast.info(`Exporting report as ${format}...`, {
-      position: 'top-right',
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true
-    });
-    // TODO: Implement actual export functionality
+
+    if (format === 'PDF') {
+      try {
+        toast.info('Generating PDF...', {
+          position: 'top-right',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        });
+
+        const doc = new jsPDF('l', 'pt', 'a4'); // landscape, points, A4 size
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 40;
+        let yPosition = margin;
+
+        // Add title
+        doc.setFontSize(16);
+        doc.setTextColor(27, 94, 32); // #1b5e20
+        doc.text('Project Executive Summary Extended Aggregate Report', margin, yPosition);
+        yPosition += 25;
+
+        // Add filter information
+        doc.setFontSize(10);
+        doc.setTextColor(74, 124, 89); // #4a7c59
+        const clientLabel = getLabel(clientOptions, appliedFilters.client, 'N/A');
+        doc.text(`Client: ${clientLabel}`, margin, yPosition);
+        yPosition += 15;
+        doc.text(`Date Range: ${appliedFilters.startDate || 'Any'} – ${appliedFilters.endDate || 'Any'}`, margin, yPosition);
+        yPosition += 25;
+
+        // Add main data table
+        doc.setFontSize(12);
+        doc.setTextColor(27, 94, 32);
+        doc.text('Project Summary', margin, yPosition);
+        yPosition += 15;
+
+        // Prepare table data from displayRows
+        const tableData = displayRows.map(row => {
+          const indent = row.rowType === 'projectGroup' ? '' : row.rowType === 'contractGroup' ? '  ' : '    ';
+          const label = row.rowType === 'projectGroup'
+            ? row.projectScope
+            : row.rowType === 'contractGroup'
+              ? row.contractScope
+              : row.subContractor || row.contractScope || row.projectScope;
+
+          return [
+            indent + label,
+            row.originalContractAmount ? formatCurrency(row.originalContractAmount) : '',
+            row.adjustedContractAmount ? formatCurrency(row.adjustedContractAmount) : '',
+            row.paidToDateAmount ? formatCurrency(row.paidToDateAmount) : '',
+            row.paidToDatePercent ? formatPercent(row.paidToDatePercent) : '',
+            row.lbeAdjusted ? formatCurrency(row.lbeAdjusted) : '',
+            row.mbeAdjusted ? formatCurrency(row.mbeAdjusted) : '',
+            row.wbeAdjusted ? formatCurrency(row.wbeAdjusted) : ''
+          ];
+        });
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Project/Contract/Subcontractor', 'Original Amount', 'Adjusted Amount', 'Paid To Date', '% Paid', 'LBE', 'MBE', 'WBE']],
+          body: tableData,
+          theme: 'grid',
+          headStyles: {
+            fillColor: [142, 169, 78],
+            textColor: [255, 255, 255],
+            fontSize: 8,
+            fontStyle: 'bold'
+          },
+          bodyStyles: {
+            fontSize: 7,
+            textColor: [45, 74, 31]
+          },
+          alternateRowStyles: {
+            fillColor: [245, 247, 242]
+          },
+          margin: { left: margin, right: margin },
+          styles: {
+            cellPadding: 4,
+            overflow: 'linebreak',
+            cellWidth: 'wrap'
+          },
+          columnStyles: {
+            0: { cellWidth: 140 },
+            1: { cellWidth: 70, halign: 'right' },
+            2: { cellWidth: 70, halign: 'right' },
+            3: { cellWidth: 70, halign: 'right' },
+            4: { cellWidth: 50, halign: 'right' },
+            5: { cellWidth: 70, halign: 'right' },
+            6: { cellWidth: 70, halign: 'right' },
+            7: { cellWidth: 70, halign: 'right' }
+          },
+          didParseCell: function(data) {
+            const row = displayRows[data.row.index];
+            if (row) {
+              if (row.rowType === 'grandTotal') {
+                data.cell.styles.fillColor = [142, 169, 78];
+                data.cell.styles.textColor = [255, 255, 255];
+                data.cell.styles.fontStyle = 'bold';
+              } else if (row.rowType === 'projectGroup') {
+                data.cell.styles.fillColor = [142, 169, 78, 0.15 * 255];
+                data.cell.styles.fontStyle = 'bold';
+              } else if (row.rowType === 'contractGroup') {
+                data.cell.styles.fillColor = [142, 169, 78, 0.08 * 255];
+                data.cell.styles.fontStyle = 'bold';
+              }
+            }
+          }
+        });
+
+        // Add new page for Goals Table and Chart
+        doc.addPage();
+        yPosition = margin;
+
+        // Add Goals Table
+        doc.setFontSize(12);
+        doc.setTextColor(27, 94, 32);
+        doc.text('Overall Diversity Business and Workforce Hiring Goals', margin, yPosition);
+        yPosition += 15;
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Goal Name', 'Goal Value', '%', 'Actuals', '%']],
+          body: [
+            ['MBE (dollars)', '$127,206,929.88', '36.00%', '$11,962,330.80', '3.4%']
+          ],
+          theme: 'grid',
+          headStyles: {
+            fillColor: [142, 169, 78],
+            textColor: [255, 255, 255],
+            fontSize: 9,
+            fontStyle: 'bold'
+          },
+          bodyStyles: {
+            fontSize: 9,
+            textColor: [45, 74, 31]
+          },
+          margin: { left: margin, right: margin },
+          styles: {
+            cellPadding: 8
+          },
+          columnStyles: {
+            0: { cellWidth: 150 },
+            1: { cellWidth: 120, halign: 'right' },
+            2: { cellWidth: 80, halign: 'right' },
+            3: { cellWidth: 120, halign: 'right' },
+            4: { cellWidth: 80, halign: 'right' }
+          }
+        });
+
+        yPosition = doc.lastAutoTable.finalY + 30;
+
+        // Add Business Spend Chart
+        if (chartRef.current) {
+          doc.setFontSize(12);
+          doc.setTextColor(27, 94, 32);
+          doc.text('Business Spend', margin, yPosition);
+          yPosition += 15;
+
+          try {
+            const canvas = await html2canvas(chartRef.current, {
+              backgroundColor: '#ffffff',
+              scale: 2
+            });
+            const imgData = canvas.toDataURL('image/png');
+            const imgWidth = 400;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+            // Check if image fits on current page
+            if (yPosition + imgHeight > pageHeight - margin) {
+              doc.addPage();
+              yPosition = margin;
+              doc.setFontSize(12);
+              doc.setTextColor(27, 94, 32);
+              doc.text('Business Spend (continued)', margin, yPosition);
+              yPosition += 15;
+            }
+
+            doc.addImage(imgData, 'PNG', margin, yPosition, imgWidth, imgHeight);
+          } catch (error) {
+            console.error('Error capturing chart:', error);
+            doc.setFontSize(10);
+            doc.setTextColor(200, 0, 0);
+            doc.text('Chart could not be captured', margin, yPosition);
+          }
+        }
+
+        // Save the PDF
+        const fileName = `Project_Executive_Summary_${appliedFilters.client || 'Report'}_${new Date().toISOString().split('T')[0]}.pdf`;
+        doc.save(fileName);
+
+        toast.success('PDF exported successfully!', {
+          position: 'top-right',
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        });
+      } catch (error) {
+        console.error('Error generating PDF:', error);
+        toast.error('Failed to generate PDF. Please try again.', {
+          position: 'top-right',
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        });
+      }
+    } else {
+      toast.info(`Exporting report as ${format}...`, {
+        position: 'top-right',
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+      // TODO: Implement Word and Excel export functionality
+    }
   };
 
   const getLabel = (options, value, fallback) => {
@@ -1781,6 +1998,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
 
           {/* Business Spend Pie Chart Card */}
           <div
+            ref={chartRef}
             style={{
               background: 'rgba(255, 255, 255, 0.85)',
               borderRadius: '12px',

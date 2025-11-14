@@ -1140,6 +1140,19 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
     }).join(', ');
   };
 
+  const getContractNumbersSummary = useCallback((values) => {
+    if (!values || values.length === 0) {
+      return 'None';
+    }
+
+    return values
+      .map((value) => {
+        const contractOption = allContractOptions.find(opt => opt.value === value);
+        return contractOption ? contractOption.value : value;
+      })
+      .join(', ');
+  }, [allContractOptions]);
+
   // Custom styles for React Select
   const customSelectStyles = {
     control: (provided) => ({
@@ -1240,19 +1253,19 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#4a7c59', flexWrap: 'wrap' }}>
                       <span><strong>Client:</strong> {getLabel(clientOptions, appliedFilters.client, 'N/A')}</span>
                       <span style={{ color: '#ddd' }}>|</span>
-                      {appliedFilters.contracts.length === 1 ? (
-                        <span>
-                          <strong>Contract:</strong> {getLabel(allContractOptions, appliedFilters.contracts[0], 'N/A')}
-                        </span>
-                      ) : (
-                        <span
-                          data-tooltip-id="contracts-tooltip"
-                          data-tooltip-content={getMultipleLabels(allContractOptions, appliedFilters.contracts)}
-                          style={{ cursor: 'help', borderBottom: '1px dotted #4a7c59' }}
-                        >
-                          <strong>Contracts:</strong> {appliedFilters.contracts.length}
-                        </span>
-                      )}
+                      {(() => {
+                        const contractSummary = getContractNumbersSummary(appliedFilters.contracts);
+                        const hasMultipleContracts = appliedFilters.contracts.length > 1;
+                        return (
+                          <span
+                            style={{ cursor: hasMultipleContracts ? 'help' : 'default', borderBottom: hasMultipleContracts ? '1px dotted #4a7c59' : 'none' }}
+                            data-tooltip-id={hasMultipleContracts ? 'contracts-tooltip' : undefined}
+                            data-tooltip-content={hasMultipleContracts ? contractSummary : undefined}
+                          >
+                            <strong>Contracts:</strong> {contractSummary}
+                          </span>
+                        );
+                      })()}
                       <span style={{ color: '#ddd' }}>|</span>
                       <span><strong>Dates:</strong> {appliedFilters.startDate || 'Any'} – {appliedFilters.endDate || 'Any'}</span>
                     </div>
@@ -1697,9 +1710,6 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
             marginBottom: '10px'
           }}
         >
-          {/* <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#1b5e20', fontWeight: '600' }}>
-            Contract Summary
-          </h3> */}
           <div className="ag-theme-balham" style={{ width: '100%' }}>
             <AgGridReact
               gridOptions={gridOptions}

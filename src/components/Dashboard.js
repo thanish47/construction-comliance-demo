@@ -145,14 +145,40 @@ const Dashboard = () => {
               <ResponsiveContainer width="100%" height="90%">
                 <BarChart data={residencyGoalData} margin={{ top: 5, right: 10, bottom: 15, left: 0 }} barSize={80}>
                   <defs>
-                    <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={themeColors.blue} stopOpacity={0.9} />
-                      <stop offset="100%" stopColor={themeColors.blue} stopOpacity={0.6} />
+                    {/* 3D Frosted Glass Gradients - Vertical for top-to-bottom light effect */}
+                    <linearGradient id="blueGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.blue} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.blue} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.blue} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.blue} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.blue} stopOpacity={0.95} />
                     </linearGradient>
-                    <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={themeColors.purple} stopOpacity={0.9} />
-                      <stop offset="100%" stopColor={themeColors.purple} stopOpacity={0.6} />
+                    <linearGradient id="purpleGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.purple} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.purple} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.purple} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.purple} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.purple} stopOpacity={0.95} />
                     </linearGradient>
+                    {/* Glass reflection overlay - top highlight */}
+                    <linearGradient id="glassReflection" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(255, 255, 255, 0.7)" />
+                      <stop offset="15%" stopColor="rgba(255, 255, 255, 0.3)" />
+                      <stop offset="50%" stopColor="rgba(255, 255, 255, 0.05)" />
+                      <stop offset="100%" stopColor="rgba(255, 255, 255, 0.1)" />
+                    </linearGradient>
+                    {/* 3D Shadow effect */}
+                    <filter id="bar3DShadow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                      <feOffset dx="2" dy="4" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.3)" strokeWidth={1} />
                   <XAxis
@@ -170,13 +196,13 @@ const Dashboard = () => {
                     stroke="rgba(255, 255, 255, 0.5)"
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                  <Bar dataKey="value" radius={[12, 12, 0, 0]} filter="url(#bar3DShadow)">
                     {residencyGoalData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={entry.type === 'Goal' ? 'url(#blueGradient)' : 'url(#purpleGradient)'}
-                        stroke="rgba(255, 255, 255, 0.5)"
-                        strokeWidth={2}
+                        fill={entry.type === 'Goal' ? 'url(#blueGradient3D)' : 'url(#purpleGradient3D)'}
+                        stroke="rgba(255, 255, 255, 0.7)"
+                        strokeWidth={3}
                       />
                     ))}
                   </Bar>
@@ -190,10 +216,26 @@ const Dashboard = () => {
               <ResponsiveContainer width="100%" height="90%">
                 <PieChart>
                   <defs>
-                    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    {/* 3D Frosted Glass Gradients for Pie slices */}
+                    <radialGradient id="femaleGradient1">
+                      <stop offset="30%" stopColor={femaleWorkforceColors[0]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={femaleWorkforceColors[0]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={femaleWorkforceColors[0]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="femaleGradient2">
+                      <stop offset="30%" stopColor={femaleWorkforceColors[1]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={femaleWorkforceColors[1]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={femaleWorkforceColors[1]} stopOpacity={0.8} />
+                    </radialGradient>
+                    {/* 3D Shadow for pie slices */}
+                    <filter id="pie3DShadow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                      <feOffset dx="3" dy="5" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.35"/>
+                      </feComponentTransfer>
                       <feMerge>
-                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode/>
                         <feMergeNode in="SourceGraphic"/>
                       </feMerge>
                     </filter>
@@ -202,21 +244,21 @@ const Dashboard = () => {
                     data={femaleWorkforceData}
                     cx="50%"
                     cy="50%"
-                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.5)', strokeWidth: 2 }}
+                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.6)', strokeWidth: 2.5 }}
                     label={({ name, value }) => `${name}: ${value}%`}
                     innerRadius={70}
                     outerRadius={120}
                     fill="#8884d8"
                     dataKey="value"
-                    paddingAngle={5}
+                    paddingAngle={6}
+                    filter="url(#pie3DShadow)"
                   >
                     {femaleWorkforceData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={femaleWorkforceColors[index % femaleWorkforceColors.length]}
-                        stroke="rgba(255, 255, 255, 0.6)"
-                        strokeWidth={3}
-                        fillOpacity={0.85}
+                        fill={`url(#femaleGradient${index + 1})`}
+                        stroke="rgba(255, 255, 255, 0.8)"
+                        strokeWidth={4}
                       />
                     ))}
                   </Pie>
@@ -230,24 +272,59 @@ const Dashboard = () => {
               <div style={chartTitleStyle}>Race Workforce Distribution</div>
               <ResponsiveContainer width="100%" height="90%">
                 <PieChart>
+                  <defs>
+                    {/* 3D Frosted Glass Gradients for Race Workforce */}
+                    <radialGradient id="raceGradient1">
+                      <stop offset="30%" stopColor={raceColors[0]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={raceColors[0]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={raceColors[0]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="raceGradient2">
+                      <stop offset="30%" stopColor={raceColors[1]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={raceColors[1]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={raceColors[1]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="raceGradient3">
+                      <stop offset="30%" stopColor={raceColors[2]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={raceColors[2]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={raceColors[2]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="raceGradient4">
+                      <stop offset="30%" stopColor={raceColors[3]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={raceColors[3]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={raceColors[3]} stopOpacity={0.8} />
+                    </radialGradient>
+                    {/* 3D Shadow for pie slices */}
+                    <filter id="pie3DShadowRace" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                      <feOffset dx="3" dy="5" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.35"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
                   <Pie
                     data={raceWorkforceData}
                     cx="50%"
                     cy="50%"
-                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.5)', strokeWidth: 2 }}
+                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.6)', strokeWidth: 2.5 }}
                     label={({ name, value }) => `${name}: ${value}%`}
                     outerRadius={120}
                     fill="#8884d8"
                     dataKey="value"
-                    paddingAngle={5}
+                    paddingAngle={6}
+                    filter="url(#pie3DShadowRace)"
                   >
                     {raceWorkforceData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={raceColors[index % raceColors.length]}
-                        stroke="rgba(255, 255, 255, 0.6)"
-                        strokeWidth={3}
-                        fillOpacity={0.85}
+                        fill={`url(#raceGradient${index + 1})`}
+                        stroke="rgba(255, 255, 255, 0.8)"
+                        strokeWidth={4}
                       />
                     ))}
                   </Pie>
@@ -261,24 +338,49 @@ const Dashboard = () => {
               <div style={chartTitleStyle}>Minority Workforce</div>
               <ResponsiveContainer width="100%" height="90%">
                 <PieChart>
+                  <defs>
+                    {/* 3D Frosted Glass Gradients for Minority Workforce */}
+                    <radialGradient id="minorityGradient1">
+                      <stop offset="30%" stopColor={minorityWorkforceColors[0]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={minorityWorkforceColors[0]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={minorityWorkforceColors[0]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="minorityGradient2">
+                      <stop offset="30%" stopColor={minorityWorkforceColors[1]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={minorityWorkforceColors[1]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={minorityWorkforceColors[1]} stopOpacity={0.8} />
+                    </radialGradient>
+                    {/* 3D Shadow for pie slices */}
+                    <filter id="pie3DShadowMinority" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                      <feOffset dx="3" dy="5" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.35"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
                   <Pie
                     data={minorityWorkforceData}
                     cx="50%"
                     cy="50%"
-                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.5)', strokeWidth: 2 }}
+                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.6)', strokeWidth: 2.5 }}
                     label={({ name, value }) => `${name}: ${value}%`}
                     outerRadius={120}
                     fill="#8884d8"
                     dataKey="value"
-                    paddingAngle={5}
+                    paddingAngle={6}
+                    filter="url(#pie3DShadowMinority)"
                   >
                     {minorityWorkforceData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={minorityWorkforceColors[index % minorityWorkforceColors.length]}
-                        stroke="rgba(255, 255, 255, 0.6)"
-                        strokeWidth={3}
-                        fillOpacity={0.85}
+                        fill={`url(#minorityGradient${index + 1})`}
+                        stroke="rgba(255, 255, 255, 0.8)"
+                        strokeWidth={4}
                       />
                     ))}
                   </Pie>
@@ -293,14 +395,33 @@ const Dashboard = () => {
               <ResponsiveContainer width="100%" height="90%">
                 <BarChart data={mbeGoalData} margin={{ top: 5, right: 10, bottom: 15, left: 0 }} barSize={80}>
                   <defs>
-                    <linearGradient id="tealGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={themeColors.accent1} stopOpacity={0.9} />
-                      <stop offset="100%" stopColor={themeColors.accent1} stopOpacity={0.6} />
+                    {/* 3D Frosted Glass Gradients - Vertical for top-to-bottom light effect */}
+                    <linearGradient id="tealGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.accent1} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.accent1} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.accent1} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.accent1} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.accent1} stopOpacity={0.95} />
                     </linearGradient>
-                    <linearGradient id="redGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={themeColors.red} stopOpacity={0.9} />
-                      <stop offset="100%" stopColor={themeColors.red} stopOpacity={0.6} />
+                    <linearGradient id="redGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.red} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.red} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.red} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.red} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.red} stopOpacity={0.95} />
                     </linearGradient>
+                    {/* 3D Shadow effect */}
+                    <filter id="bar3DShadowMBE" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                      <feOffset dx="2" dy="4" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.3)" strokeWidth={1} />
                   <XAxis
@@ -318,13 +439,13 @@ const Dashboard = () => {
                     stroke="rgba(255, 255, 255, 0.5)"
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                  <Bar dataKey="value" radius={[12, 12, 0, 0]} filter="url(#bar3DShadowMBE)">
                     {mbeGoalData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={entry.type === 'Goal' ? 'url(#tealGradient)' : 'url(#redGradient)'}
-                        stroke="rgba(255, 255, 255, 0.5)"
-                        strokeWidth={2}
+                        fill={entry.type === 'Goal' ? 'url(#tealGradient3D)' : 'url(#redGradient3D)'}
+                        stroke="rgba(255, 255, 255, 0.7)"
+                        strokeWidth={3}
                       />
                     ))}
                   </Bar>
@@ -338,14 +459,33 @@ const Dashboard = () => {
               <ResponsiveContainer width="100%" height="90%">
                 <BarChart data={wbeGoalData} margin={{ top: 5, right: 10, bottom: 15, left: 0 }} barSize={80}>
                   <defs>
-                    <linearGradient id="goalGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={themeColors.goal} stopOpacity={0.9} />
-                      <stop offset="100%" stopColor={themeColors.goal} stopOpacity={0.6} />
+                    {/* 3D Frosted Glass Gradients - Vertical for top-to-bottom light effect */}
+                    <linearGradient id="goalGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.goal} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.goal} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.goal} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.goal} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.goal} stopOpacity={0.95} />
                     </linearGradient>
-                    <linearGradient id="actualGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={themeColors.actual} stopOpacity={0.9} />
-                      <stop offset="100%" stopColor={themeColors.actual} stopOpacity={0.6} />
+                    <linearGradient id="actualGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.actual} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.actual} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.actual} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.actual} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.actual} stopOpacity={0.95} />
                     </linearGradient>
+                    {/* 3D Shadow effect */}
+                    <filter id="bar3DShadowWBE" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                      <feOffset dx="2" dy="4" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.3)" strokeWidth={1} />
                   <XAxis
@@ -363,13 +503,13 @@ const Dashboard = () => {
                     stroke="rgba(255, 255, 255, 0.5)"
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                  <Bar dataKey="value" radius={[12, 12, 0, 0]} filter="url(#bar3DShadowWBE)">
                     {wbeGoalData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={entry.type === 'Goal' ? 'url(#goalGradient)' : 'url(#actualGradient)'}
-                        stroke="rgba(255, 255, 255, 0.5)"
-                        strokeWidth={2}
+                        fill={entry.type === 'Goal' ? 'url(#goalGradient3D)' : 'url(#actualGradient3D)'}
+                        stroke="rgba(255, 255, 255, 0.7)"
+                        strokeWidth={3}
                       />
                     ))}
                   </Bar>

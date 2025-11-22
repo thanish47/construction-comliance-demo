@@ -719,8 +719,15 @@ header {
 main {
     padding: 10px;
     min-height: calc(100vh - 120px);
-    /* background: linear-gradient(135deg, #e7f1d0 0%, #a7c66f 100%); */
-    background: linear-gradient(135deg, #f9fdf2 0%, #c8d5b0 100%);
+    /* Background image with overlay for glassmorphism */
+    /* background:
+        linear-gradient(135deg, rgba(249, 253, 242, 0.7) 0%, rgba(200, 213, 176, 0.6) 100%),
+        url('../public/app_bg_webp_2.webp'); */
+    /* background:
+        url('../public/app_bg_webp_2.webp'); */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .content-container {
@@ -810,12 +817,86 @@ main {
     padding: 20px;
     max-width: 1800px;
     margin: 0 auto;
+    position: relative;
+}
+
+/* Animated background orbs for glassmorphism enhancement */
+.dashboard-grid::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -5%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(142, 169, 78, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(60px);
+    animation: float 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.dashboard-grid::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    right: -5%;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(126, 190, 197, 0.18) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(70px);
+    animation: float 25s ease-in-out infinite reverse;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate(0, 0) scale(1);
+    }
+    33% {
+        transform: translate(30px, -30px) scale(1.1);
+    }
+    66% {
+        transform: translate(-20px, 20px) scale(0.9);
+    }
 }
 
 .chart-container {
     width: 100%;
     overflow: hidden;
     position: relative;
+    z-index: 1;
+}
+
+/* Subtle glass shimmer effect */
+.chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    transform: skewX(-20deg);
+    animation: shimmer 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    20%, 100% {
+        left: 200%;
+    }
 }
 
 .chart-container:hover {

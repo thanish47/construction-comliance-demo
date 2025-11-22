@@ -662,91 +662,125 @@ const ContractDetailsTab = () => {
               </thead>
               <tbody>
                 {contract.Contacts && contract.Contacts.length > 0 ? (
-                  contract.Contacts.map((contact, index) => (
-                    <tr key={index} style={{
-                      borderBottom: '1px solid rgba(142, 169, 78, 0.15)',
-                      transition: 'background-color 0.2s ease'
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(142, 169, 78, 0.05)'}
-                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.FirstName || 'N/A'}</td>
-                      <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.LastName || 'N/A'}</td>
-                      <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.Title || 'N/A'}</td>
-                      <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.Organization || 'N/A'}</td>
-                      <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.Telephone || 'N/A'}</td>
-                      <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.MobilePhone || 'N/A'}</td>
-                      <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>
-                        {contact.Email ? (
-                          <a href={`mailto:${contact.Email}`} style={{ color: '#1976d2', textDecoration: 'none' }}>
-                            {contact.Email}
-                          </a>
-                        ) : 'N/A'}
-                      </td>
-                      <td style={{ padding: '12px 8px', textAlign: 'center' }}>
-                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-                          <button
-                            onClick={() => alert(`Edit contact: ${contact.FirstName} ${contact.LastName}`)}
-                            title="Edit Contact"
-                            style={{
-                              padding: '4px 8px',
-                              background: 'rgba(25, 118, 210, 0.1)',
-                              border: '1px solid rgba(25, 118, 210, 0.3)',
-                              borderRadius: '4px',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseOver={(e) => {
-                              e.currentTarget.style.background = 'rgba(25, 118, 210, 0.2)';
-                              e.currentTarget.style.borderColor = 'rgba(25, 118, 210, 0.5)';
-                            }}
-                            onMouseOut={(e) => {
-                              e.currentTarget.style.background = 'rgba(25, 118, 210, 0.1)';
-                              e.currentTarget.style.borderColor = 'rgba(25, 118, 210, 0.3)';
-                            }}
-                          >
-                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ width: '14px', height: '14px', fill: '#1976d2' }}>
-                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => {
-                              if (window.confirm(`Are you sure you want to delete contact: ${contact.FirstName} ${contact.LastName}?`)) {
-                                alert('Delete functionality will be implemented');
-                              }
-                            }}
-                            title="Delete Contact"
-                            style={{
-                              padding: '4px 8px',
-                              background: 'rgba(211, 47, 47, 0.1)',
-                              border: '1px solid rgba(211, 47, 47, 0.3)',
-                              borderRadius: '4px',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseOver={(e) => {
-                              e.currentTarget.style.background = 'rgba(211, 47, 47, 0.2)';
-                              e.currentTarget.style.borderColor = 'rgba(211, 47, 47, 0.5)';
-                            }}
-                            onMouseOut={(e) => {
-                              e.currentTarget.style.background = 'rgba(211, 47, 47, 0.1)';
-                              e.currentTarget.style.borderColor = 'rgba(211, 47, 47, 0.3)';
-                            }}
-                          >
-                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ width: '14px', height: '14px', fill: '#d32f2f' }}>
-                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                            </svg>
-                          </button>
-                        </div>
+                  <>
+                    {contract.Contacts.map((contact, index) => (
+                      <tr key={index} style={{
+                        borderBottom: '1px solid rgba(142, 169, 78, 0.15)',
+                        transition: 'background-color 0.2s ease'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(142, 169, 78, 0.05)'}
+                      onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.FirstName || 'N/A'}</td>
+                        <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.LastName || 'N/A'}</td>
+                        <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.Title || 'N/A'}</td>
+                        <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.Organization || 'N/A'}</td>
+                        <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.Telephone || 'N/A'}</td>
+                        <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>{contact.MobilePhone || 'N/A'}</td>
+                        <td style={{ padding: '12px 8px', color: '#2d4a1f' }}>
+                          {contact.Email ? (
+                            <a href={`mailto:${contact.Email}`} style={{ color: '#1976d2', textDecoration: 'none' }}>
+                              {contact.Email}
+                            </a>
+                          ) : 'N/A'}
+                        </td>
+                        <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                            <button
+                              onClick={() => alert(`Edit contact: ${contact.FirstName} ${contact.LastName}`)}
+                              title="Edit Contact"
+                              style={{
+                                padding: '4px 8px',
+                                background: 'rgba(25, 118, 210, 0.1)',
+                                border: '1px solid rgba(25, 118, 210, 0.3)',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = 'rgba(25, 118, 210, 0.2)';
+                                e.currentTarget.style.borderColor = 'rgba(25, 118, 210, 0.5)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'rgba(25, 118, 210, 0.1)';
+                                e.currentTarget.style.borderColor = 'rgba(25, 118, 210, 0.3)';
+                              }}
+                            >
+                              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ width: '14px', height: '14px', fill: '#1976d2' }}>
+                                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (window.confirm(`Are you sure you want to delete contact: ${contact.FirstName} ${contact.LastName}?`)) {
+                                  alert('Delete functionality will be implemented');
+                                }
+                              }}
+                              title="Delete Contact"
+                              style={{
+                                padding: '4px 8px',
+                                background: 'rgba(211, 47, 47, 0.1)',
+                                border: '1px solid rgba(211, 47, 47, 0.3)',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease'
+                              }}
+                              onMouseOver={(e) => {
+                                e.currentTarget.style.background = 'rgba(211, 47, 47, 0.2)';
+                                e.currentTarget.style.borderColor = 'rgba(211, 47, 47, 0.5)';
+                              }}
+                              onMouseOut={(e) => {
+                                e.currentTarget.style.background = 'rgba(211, 47, 47, 0.1)';
+                                e.currentTarget.style.borderColor = 'rgba(211, 47, 47, 0.3)';
+                              }}
+                            >
+                              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style={{ width: '14px', height: '14px', fill: '#d32f2f' }}>
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                    {/* Add empty rows to ensure minimum of 2 rows */}
+                    {Array.from({ length: Math.max(0, 2 - contract.Contacts.length) }).map((_, index) => (
+                      <tr key={`empty-${index}`} style={{
+                        borderBottom: '1px solid rgba(142, 169, 78, 0.15)',
+                        height: '49px'
+                      }}>
+                        <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                        <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                      </tr>
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    <tr>
+                      <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: '#4a7c59', fontStyle: 'italic' }}>
+                        No contacts found for this contract.
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="8" style={{ padding: '20px', textAlign: 'center', color: '#4a7c59', fontStyle: 'italic' }}>
-                      No contacts found for this contract.
-                    </td>
-                  </tr>
+                    {/* Add one more empty row to make it 2 rows total */}
+                    <tr style={{
+                      borderBottom: '1px solid rgba(142, 169, 78, 0.15)',
+                      height: '49px'
+                    }}>
+                      <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                      <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                      <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                      <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                      <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                      <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                      <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                      <td style={{ padding: '12px 8px', color: 'transparent' }}>&nbsp;</td>
+                    </tr>
+                  </>
                 )}
               </tbody>
             </table>

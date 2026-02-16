@@ -9,8 +9,8 @@ const NavSideBar = ({ isActive, activeSubmenu, onToggleSubmenu, onSubmenuClick, 
 
   const menuData = [
     {
-      id: 'gpts',
-      title: 'GPTS',
+      id: 'main',
+      title: 'Main',
       items: [
         { label: 'Dashboard', href: '/dashboard' },
         { label: 'Clients', href: '#clients' },

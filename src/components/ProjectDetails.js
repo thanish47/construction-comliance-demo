@@ -106,7 +106,7 @@ const ProjectDetails = () => {
     <div className={`main-wrapper ${mainShifted ? 'shifted' : ''}`}>
       <main>
         <div className="content-container">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0px 10px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <h1 className="page-title">{project.ProjectNumber}</h1>
               <button
@@ -189,7 +189,7 @@ const ProjectDetails = () => {
           {/* Project Summary Card */}
           {summaryOpen && (
             <div style={{
-              marginBottom: '20px',
+              margin: '10px 10px 0px 10px',
               padding: '20px',
               background: 'rgba(255, 255, 255, 0.6)',
               backdropFilter: 'blur(8px)',

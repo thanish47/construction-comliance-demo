@@ -1,4 +1,4 @@
-// Script to generate 1000 projects for the GPTS application
+// Script to generate sample 1000 projects for the Contruction Compliance demo application
 
 const fs = require('fs');
 const path = require('path');

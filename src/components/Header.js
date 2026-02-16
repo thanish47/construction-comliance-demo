@@ -25,7 +25,7 @@ const Header = ({
             </div>
             <div className="logo">
               <Link to="/dashboard">
-                <img src="/logo-original.webp" alt="GPTS Logo" loading="lazy" />
+                <img src="/tmp_logo.png" alt="My Logo" loading="lazy" />
               </Link>
             </div>
           </div>

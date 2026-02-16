@@ -24,7 +24,7 @@ function App() {
   const [messagesFloatVisible, setMessagesFloatVisible] = useState(true);
   const [notificationsSidebarActive, setNotificationsSidebarActive] = useState(false);
   const [anyRightSidebarActive, setAnyRightSidebarActive] = useState(false);
-  const [activeSubmenu, setActiveSubmenu] = useState('gpts');
+  const [activeSubmenu, setActiveSubmenu] = useState('main');
   const [activeTab, setActiveTab] = useState('Projects');
   const activeSidebarIdsRef = useRef(new Set());
 

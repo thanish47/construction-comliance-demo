@@ -1,287 +1,137 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { AgCharts } from 'ag-charts-react';
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 const Dashboard = () => {
   const { mainShifted } = useOutletContext();
 
-  // Chart 1: Residency Goal - Bar Chart
-  const residencyGoalOptions = {
-    title: {
-      text: 'Residency Goal',
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#2d4a1f'
-    },
-    data: [
-      { category: 'Goal', percentage: 50 },
-      { category: 'Actual', percentage: 45 }
-    ],
-    series: [
-      {
-        type: 'bar',
-        xKey: 'category',
-        yKey: 'percentage',
-        yName: 'Percentage',
-        itemStyler: ({ datum }) => {
-          const colors = {
-            'Goal': { fill: '#2A5FE5', stroke: '#1F4FC0' },
-            'Actual': { fill: '#3FD9E6', stroke: '#1DC0CD' }
-          };
-          return colors[datum.category] || { fill: '#2A5FE5', stroke: '#1F4FC0' };
-        },
-        strokeWidth: 2,
-        label: {
-          enabled: true,
-          formatter: ({ value }) => `${value}%`
-        }
-      }
-    ],
-    axes: [
-      {
-        type: 'category',
-        position: 'bottom',
-        title: {
-          text: 'Category',
-          color: '#2d4a1f'
-        }
-      },
-      {
-        type: 'number',
-        position: 'left',
-        title: {
-          text: 'Percentage (%)',
-          color: '#2d4a1f'
-        },
-        min: 0,
-        max: 100,
-        interval: 5
-      }
-    ]
+  // Consistent color palette matching the app theme
+  const themeColors = {
+    primary: '#8ea94e',      // Main green
+    primaryDark: '#6d8239',  // Dark green
+    secondary: '#f48020',    // Orange
+    tertiary: '#006124',     // Deep green
+    accent1: '#7EBEC5',      // Teal
+    accent2: '#fee612',      // Gold
+    blue: '#0f62fe',
+    purple: '#8a3ffc',
+    red: '#fa4d56',
+    teal: '#007d79',
+    goal: '#8ea94e',
+    commitment: '#f48020',
+    actual: '#006124',
+    cyan: '#00539a'
   };
 
-  // Chart 2: Female Workforce - Donut Chart
-  const femaleWorkforceOptions = {
-    title: {
-      text: 'Female Workforce',
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#2d4a1f'
-    },
-    data: [
-      { category: 'Goal', percentage: 45 },
-      { category: 'Actual', percentage: 42 }
-    ],
-    series: [
-      {
-        type: 'donut',
-        angleKey: 'percentage',
-        calloutLabelKey: 'category',
-        innerRadiusRatio: 0.6,
-        fills: ['#8A52E6', '#3EBC8D'],
-        strokes: ['#6D38C0', '#2DA176'],
-        strokeWidth: 2,
-        calloutLabel: {
-          enabled: true
-        },
-        sectorLabel: {
-          enabled: true,
-          formatter: ({ value }) => `${value}%`
-        }
-      }
-    ]
-  };
+  // Chart 1: Residency Goal - Bar Chart
+  const residencyGoalData = [
+    { name: 'Goal', value: 50, type: 'Goal' },
+    { name: 'Actual', value: 45, type: 'Actual' }
+  ];
+
+  // Chart 2: Female Workforce - Pie Chart
+  const femaleWorkforceData = [
+    { name: 'Goal', value: 45 },
+    { name: 'Actual', value: 42 }
+  ];
+
+  const femaleWorkforceColors = [themeColors.red, themeColors.teal];
 
   // Chart 3: Race Workforce - Pie Chart
-  const raceWorkforceOptions = {
-    title: {
-      text: 'Race Workforce Distribution',
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#2d4a1f'
-    },
-    data: [
-      { race: 'African American', percentage: 30 },
-      { race: 'Caucasian', percentage: 45 },
-      { race: 'Hispanic', percentage: 20 },
-      { race: 'Native American', percentage: 5 }
-    ],
-    series: [
-      {
-        type: 'pie',
-        angleKey: 'percentage',
-        calloutLabelKey: 'race',
-        fills: ['#2A5FE5', '#3FD9E6', '#8A52E6', '#E6A041'],
-        strokes: ['#1F4FC0', '#1DC0CD', '#6D38C0', '#CD892E'],
-        strokeWidth: 2,
-        calloutLabel: {
-          enabled: true
-        },
-        sectorLabel: {
-          enabled: true,
-          formatter: ({ value }) => `${value}%`
-        }
-      }
-    ]
-  };
+  const raceWorkforceData = [
+    { name: 'African American', value: 30 },
+    { name: 'Caucasian', value: 45 },
+    { name: 'Hispanic', value: 20 },
+    { name: 'Native American', value: 5 }
+  ];
 
-  // Chart 4: Minority Workforce - Donut Chart
-  const minorityWorkforceOptions = {
-    title: {
-      text: 'Minority Workforce',
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#2d4a1f'
-    },
-    data: [
-      { category: 'Goal', percentage: 55 },
-      { category: 'Actual', percentage: 52 }
-    ],
-    series: [
-      {
-        type: 'donut',
-        angleKey: 'percentage',
-        calloutLabelKey: 'category',
-        innerRadiusRatio: 0.6,
-        fills: ['#E6A041', '#3EBC8D'],
-        strokes: ['#CD892E', '#2DA176'],
-        strokeWidth: 2,
-        calloutLabel: {
-          enabled: true
-        },
-        sectorLabel: {
-          enabled: true,
-          formatter: ({ value }) => `${value}%`
-        }
-      }
-    ]
-  };
+  const raceColors = [themeColors.primary, themeColors.tertiary, themeColors.secondary, themeColors.accent1];
+
+  // Chart 4: Minority Workforce - Pie Chart
+  const minorityWorkforceData = [
+    { name: 'Goal', value: 55 },
+    { name: 'Actual', value: 50 }
+  ];
+
+  const minorityWorkforceColors = [themeColors.cyan, themeColors.red];
 
   // Chart 5: MBE Goal - Bar Chart
-  const mbeGoalOptions = {
-    title: {
-      text: 'MBE (Minority Business Enterprise) Goal',
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#2d4a1f'
-    },
-    data: [
-      { category: 'Goal', percentage: 35 },
-      { category: 'Commitment', percentage: 30 },
-      { category: 'Actual', percentage: 28 }
-    ],
-    series: [
-      {
-        type: 'bar',
-        xKey: 'category',
-        yKey: 'percentage',
-        yName: 'Percentage',
-        itemStyler: ({ datum }) => {
-          const colors = {
-            'Goal': { fill: '#2A5FE5', stroke: '#1F4FC0' },
-            'Commitment': { fill: '#8A52E6', stroke: '#6D38C0' },
-            'Actual': { fill: '#3EBC8D', stroke: '#2DA176' }
-          };
-          return colors[datum.category] || { fill: '#8A52E6', stroke: '#6D38C0' };
-        },
-        strokeWidth: 2,
-        label: {
-          enabled: true,
-          formatter: ({ value }) => `${value}%`
-        }
-      }
-    ],
-    axes: [
-      {
-        type: 'category',
-        position: 'bottom',
-        title: {
-          text: 'Category',
-          color: '#2d4a1f'
-        }
-      },
-      {
-        type: 'number',
-        position: 'left',
-        title: {
-          text: 'Percentage (%)',
-          color: '#2d4a1f'
-        },
-        min: 0,
-        max: 100,
-        interval: 5
-      }
-    ]
-  };
+  const mbeGoalData = [
+    { name: 'Goal', value: 35, type: 'Goal' },
+    { name: 'Actual', value: 26, type: 'Actual' },
+  ];
 
   // Chart 6: WBE Goal - Bar Chart
-  const wbeGoalOptions = {
-    title: {
-      text: 'WBE (Women Business Enterprise) Goal',
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#2d4a1f'
-    },
-    data: [
-      { category: 'Goal', percentage: 30 },
-      { category: 'Commitment', percentage: 28 },
-      { category: 'Actual', percentage: 25 }
-    ],
-    series: [
-      {
-        type: 'bar',
-        xKey: 'category',
-        yKey: 'percentage',
-        yName: 'Percentage',
-        itemStyler: ({ datum }) => {
-          const colors = {
-            'Goal': { fill: '#3FD9E6', stroke: '#1DC0CD' },
-            'Commitment': { fill: '#E6A041', stroke: '#CD892E' },
-            'Actual': { fill: '#8A52E6', stroke: '#6D38C0' }
-          };
-          return colors[datum.category] || { fill: '#3FD9E6', stroke: '#1DC0CD' };
-        },
-        strokeWidth: 2,
-        label: {
-          enabled: true,
-          formatter: ({ value }) => `${value}%`
-        }
-      }
-    ],
-    axes: [
-      {
-        type: 'category',
-        position: 'bottom',
-        title: {
-          text: 'Category',
-          color: '#2d4a1f'
-        }
-      },
-      {
-        type: 'number',
-        position: 'left',
-        title: {
-          text: 'Percentage (%)',
-          color: '#2d4a1f'
-        },
-        min: 0,
-        max: 100,
-        interval: 5
-      }
-    ]
+  const wbeGoalData = [
+    { name: 'Goal', value: 30, type: 'Goal' },
+    { name: 'Actual', value: 22, type: 'Actual' }
+  ];
+
+  // Common chart container style - Enhanced Glassmorphism
+  const chartContainerStyle = {
+    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)',
+    backdropFilter: 'blur(20px)',
+    WebkitBackdropFilter: 'blur(20px)',
+    borderRadius: '24px',
+    border: '1px solid rgba(255, 255, 255, 0.4)',
+    boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.5)',
+    padding: '20px',
+    height: '450px',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease',
+    cursor: 'default',
+    position: 'relative',
+    overflow: 'hidden'
   };
 
-  // Common chart container style
-  const chartContainerStyle = {
-    background: 'rgba(255, 255, 255, 0.7)',
-    backdropFilter: 'blur(10px)',
-    WebkitBackdropFilter: 'blur(10px)',
-    borderRadius: '16px',
-    border: '1px solid rgba(255, 255, 255, 0.3)',
-    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15)',
-    padding: '15px',
-    minHeight: '350px',
-    height: '100%'
+  const chartTitleStyle = {
+    fontSize: '18px',
+    fontWeight: '700',
+    color: '#1b5e20',
+    marginBottom: '15px',
+    textAlign: 'center',
+    textShadow: '0 2px 4px rgba(255, 255, 255, 0.8)',
+    letterSpacing: '0.5px'
+  };
+
+  // Custom tooltip with glassmorphism
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{
+          background: 'rgba(255, 255, 255, 0.3)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          padding: '12px 16px',
+          border: '1px solid rgba(255, 255, 255, 0.5)',
+          borderRadius: '12px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.6)'
+        }}>
+          <p style={{ margin: '0 0 8px 0', fontWeight: '700', color: '#1b5e20', fontSize: '14px' }}>{label}</p>
+          {payload.map((entry, index) => (
+            <p key={index} style={{ margin: '4px 0', color: entry.color, fontSize: '13px', fontWeight: '600' }}>
+              {entry.name}: {entry.value}%
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -291,32 +141,380 @@ const Dashboard = () => {
           <div className="dashboard-grid">
             {/* Chart 1: Residency Goal */}
             <div className="chart-container" style={chartContainerStyle}>
-              <AgCharts options={residencyGoalOptions} />
+              <div style={chartTitleStyle}>Residency Goal Comparison</div>
+              <ResponsiveContainer width="100%" height="90%">
+                <BarChart data={residencyGoalData} margin={{ top: 5, right: 10, bottom: 15, left: 0 }} barSize={80}>
+                  <defs>
+                    {/* 3D Frosted Glass Gradients - Vertical for top-to-bottom light effect */}
+                    <linearGradient id="blueGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.blue} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.blue} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.blue} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.blue} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.blue} stopOpacity={0.95} />
+                    </linearGradient>
+                    <linearGradient id="purpleGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.purple} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.purple} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.purple} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.purple} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.purple} stopOpacity={0.95} />
+                    </linearGradient>
+                    {/* Glass reflection overlay - top highlight */}
+                    <linearGradient id="glassReflection" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(255, 255, 255, 0.7)" />
+                      <stop offset="15%" stopColor="rgba(255, 255, 255, 0.3)" />
+                      <stop offset="50%" stopColor="rgba(255, 255, 255, 0.05)" />
+                      <stop offset="100%" stopColor="rgba(255, 255, 255, 0.1)" />
+                    </linearGradient>
+                    {/* 3D Shadow effect */}
+                    <filter id="bar3DShadow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                      <feOffset dx="2" dy="4" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.3)" strokeWidth={1} />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fill: '#1b5e20', fontSize: 11, fontWeight: 600 }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    stroke="rgba(255, 255, 255, 0.5)"
+                  />
+                  <YAxis
+                    domain={[0, 70]}
+                    tick={{ fill: '#1b5e20', fontSize: 11, fontWeight: 500 }}
+                    label={{ value: 'Percentage (%)', angle: -90, position: 'insideLeft', style: { fill: '#1b5e20', fontSize: 12, fontWeight: 600 } }}
+                    stroke="rgba(255, 255, 255, 0.5)"
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="value" radius={[12, 12, 0, 0]} filter="url(#bar3DShadow)">
+                    {residencyGoalData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.type === 'Goal' ? 'url(#blueGradient3D)' : 'url(#purpleGradient3D)'}
+                        stroke="rgba(255, 255, 255, 0.7)"
+                        strokeWidth={3}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
             {/* Chart 2: Female Workforce */}
             <div className="chart-container" style={chartContainerStyle}>
-              <AgCharts options={femaleWorkforceOptions} />
+              <div style={chartTitleStyle}>Female Workforce</div>
+              <ResponsiveContainer width="100%" height="90%">
+                <PieChart>
+                  <defs>
+                    {/* 3D Frosted Glass Gradients for Pie slices */}
+                    <radialGradient id="femaleGradient1">
+                      <stop offset="30%" stopColor={femaleWorkforceColors[0]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={femaleWorkforceColors[0]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={femaleWorkforceColors[0]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="femaleGradient2">
+                      <stop offset="30%" stopColor={femaleWorkforceColors[1]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={femaleWorkforceColors[1]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={femaleWorkforceColors[1]} stopOpacity={0.8} />
+                    </radialGradient>
+                    {/* 3D Shadow for pie slices */}
+                    <filter id="pie3DShadow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                      <feOffset dx="3" dy="5" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.35"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <Pie
+                    data={femaleWorkforceData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.6)', strokeWidth: 2.5 }}
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    innerRadius={70}
+                    outerRadius={120}
+                    fill="#8884d8"
+                    dataKey="value"
+                    paddingAngle={6}
+                    filter="url(#pie3DShadow)"
+                  >
+                    {femaleWorkforceData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={`url(#femaleGradient${index + 1})`}
+                        stroke="rgba(255, 255, 255, 0.8)"
+                        strokeWidth={4}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
 
             {/* Chart 3: Race Workforce */}
             <div className="chart-container" style={chartContainerStyle}>
-              <AgCharts options={raceWorkforceOptions} />
+              <div style={chartTitleStyle}>Race Workforce Distribution</div>
+              <ResponsiveContainer width="100%" height="90%">
+                <PieChart>
+                  <defs>
+                    {/* 3D Frosted Glass Gradients for Race Workforce */}
+                    <radialGradient id="raceGradient1">
+                      <stop offset="30%" stopColor={raceColors[0]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={raceColors[0]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={raceColors[0]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="raceGradient2">
+                      <stop offset="30%" stopColor={raceColors[1]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={raceColors[1]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={raceColors[1]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="raceGradient3">
+                      <stop offset="30%" stopColor={raceColors[2]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={raceColors[2]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={raceColors[2]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="raceGradient4">
+                      <stop offset="30%" stopColor={raceColors[3]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={raceColors[3]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={raceColors[3]} stopOpacity={0.8} />
+                    </radialGradient>
+                    {/* 3D Shadow for pie slices */}
+                    <filter id="pie3DShadowRace" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                      <feOffset dx="3" dy="5" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.35"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <Pie
+                    data={raceWorkforceData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.6)', strokeWidth: 2.5 }}
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    outerRadius={120}
+                    fill="#8884d8"
+                    dataKey="value"
+                    paddingAngle={6}
+                    filter="url(#pie3DShadowRace)"
+                  >
+                    {raceWorkforceData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={`url(#raceGradient${index + 1})`}
+                        stroke="rgba(255, 255, 255, 0.8)"
+                        strokeWidth={4}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
 
             {/* Chart 4: Minority Workforce */}
             <div className="chart-container" style={chartContainerStyle}>
-              <AgCharts options={minorityWorkforceOptions} />
+              <div style={chartTitleStyle}>Minority Workforce</div>
+              <ResponsiveContainer width="100%" height="90%">
+                <PieChart>
+                  <defs>
+                    {/* 3D Frosted Glass Gradients for Minority Workforce */}
+                    <radialGradient id="minorityGradient1">
+                      <stop offset="30%" stopColor={minorityWorkforceColors[0]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={minorityWorkforceColors[0]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={minorityWorkforceColors[0]} stopOpacity={0.8} />
+                    </radialGradient>
+                    <radialGradient id="minorityGradient2">
+                      <stop offset="30%" stopColor={minorityWorkforceColors[1]} stopOpacity={0.9} />
+                      <stop offset="70%" stopColor={minorityWorkforceColors[1]} stopOpacity={0.6} />
+                      <stop offset="95%" stopColor={minorityWorkforceColors[1]} stopOpacity={0.8} />
+                    </radialGradient>
+                    {/* 3D Shadow for pie slices */}
+                    <filter id="pie3DShadowMinority" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                      <feOffset dx="3" dy="5" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.35"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <Pie
+                    data={minorityWorkforceData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={{ stroke: 'rgba(27, 94, 32, 0.6)', strokeWidth: 2.5 }}
+                    label={({ name, value }) => `${name}: ${value}%`}
+                    outerRadius={120}
+                    fill="#8884d8"
+                    dataKey="value"
+                    paddingAngle={6}
+                    filter="url(#pie3DShadowMinority)"
+                  >
+                    {minorityWorkforceData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={`url(#minorityGradient${index + 1})`}
+                        stroke="rgba(255, 255, 255, 0.8)"
+                        strokeWidth={4}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
 
             {/* Chart 5: MBE Goal */}
             <div className="chart-container" style={chartContainerStyle}>
-              <AgCharts options={mbeGoalOptions} />
+              <div style={chartTitleStyle}>MBE (Minority Business Enterprise) Goal</div>
+              <ResponsiveContainer width="100%" height="90%">
+                <BarChart data={mbeGoalData} margin={{ top: 5, right: 10, bottom: 15, left: 0 }} barSize={80}>
+                  <defs>
+                    {/* 3D Frosted Glass Gradients - Vertical for top-to-bottom light effect */}
+                    <linearGradient id="tealGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.accent1} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.accent1} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.accent1} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.accent1} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.accent1} stopOpacity={0.95} />
+                    </linearGradient>
+                    <linearGradient id="redGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.red} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.red} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.red} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.red} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.red} stopOpacity={0.95} />
+                    </linearGradient>
+                    {/* 3D Shadow effect */}
+                    <filter id="bar3DShadowMBE" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                      <feOffset dx="2" dy="4" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.3)" strokeWidth={1} />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fill: '#1b5e20', fontSize: 11, fontWeight: 600 }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    stroke="rgba(255, 255, 255, 0.5)"
+                  />
+                  <YAxis
+                    domain={[0, 45]}
+                    tick={{ fill: '#1b5e20', fontSize: 11, fontWeight: 500 }}
+                    label={{ value: 'Percentage (%)', angle: -90, position: 'insideLeft', style: { fill: '#1b5e20', fontSize: 12, fontWeight: 600 } }}
+                    stroke="rgba(255, 255, 255, 0.5)"
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="value" radius={[12, 12, 0, 0]} filter="url(#bar3DShadowMBE)">
+                    {mbeGoalData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.type === 'Goal' ? 'url(#tealGradient3D)' : 'url(#redGradient3D)'}
+                        stroke="rgba(255, 255, 255, 0.7)"
+                        strokeWidth={3}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
             {/* Chart 6: WBE Goal */}
             <div className="chart-container" style={chartContainerStyle}>
-              <AgCharts options={wbeGoalOptions} />
+              <div style={chartTitleStyle}>WBE (Women Business Enterprise) Goal</div>
+              <ResponsiveContainer width="100%" height="90%">
+                <BarChart data={wbeGoalData} margin={{ top: 5, right: 10, bottom: 15, left: 0 }} barSize={80}>
+                  <defs>
+                    {/* 3D Frosted Glass Gradients - Vertical for top-to-bottom light effect */}
+                    <linearGradient id="goalGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.goal} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.goal} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.goal} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.goal} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.goal} stopOpacity={0.95} />
+                    </linearGradient>
+                    <linearGradient id="actualGradient3D" x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0%" stopColor={themeColors.actual} stopOpacity={0.5} />
+                      <stop offset="20%" stopColor={themeColors.actual} stopOpacity={0.6} />
+                      <stop offset="50%" stopColor={themeColors.actual} stopOpacity={0.75} />
+                      <stop offset="80%" stopColor={themeColors.actual} stopOpacity={0.9} />
+                      <stop offset="100%" stopColor={themeColors.actual} stopOpacity={0.95} />
+                    </linearGradient>
+                    {/* 3D Shadow effect */}
+                    <filter id="bar3DShadowWBE" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                      <feOffset dx="2" dy="4" result="offsetblur"/>
+                      <feComponentTransfer>
+                        <feFuncA type="linear" slope="0.4"/>
+                      </feComponentTransfer>
+                      <feMerge>
+                        <feMergeNode/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.3)" strokeWidth={1} />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fill: '#1b5e20', fontSize: 11, fontWeight: 600 }}
+                    angle={-45}
+                    textAnchor="end"
+                    height={80}
+                    stroke="rgba(255, 255, 255, 0.5)"
+                  />
+                  <YAxis
+                    domain={[0, 40]}
+                    tick={{ fill: '#1b5e20', fontSize: 11, fontWeight: 500 }}
+                    label={{ value: 'Percentage (%)', angle: -90, position: 'insideLeft', style: { fill: '#1b5e20', fontSize: 12, fontWeight: 600 } }}
+                    stroke="rgba(255, 255, 255, 0.5)"
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="value" radius={[12, 12, 0, 0]} filter="url(#bar3DShadowWBE)">
+                    {wbeGoalData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.type === 'Goal' ? 'url(#goalGradient3D)' : 'url(#actualGradient3D)'}
+                        stroke="rgba(255, 255, 255, 0.7)"
+                        strokeWidth={3}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>

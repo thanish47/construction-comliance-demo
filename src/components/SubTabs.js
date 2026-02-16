@@ -22,8 +22,48 @@ const SubTabs = ({ tabs = [], onTabClick, activeTab, enableOverflow = true }) =>
     if (activeTab) {
       return activeTab === href;
     }
+
     const pathname = location.pathname;
-    return pathname === href || pathname.startsWith(`${href}/`);
+
+    // Normalize both paths for comparison (decode URI components)
+    const normalizePathForComparison = (path) => {
+      try {
+        return decodeURIComponent(path);
+      } catch (e) {
+        return path;
+      }
+    };
+
+    const normalizedPathname = normalizePathForComparison(pathname);
+    const normalizedHref = normalizePathForComparison(href);
+
+    // Exact match (normalized)
+    if (normalizedPathname === normalizedHref) {
+      return true;
+    }
+
+    // Also check exact match without normalization (for already encoded URLs)
+    if (pathname === href) {
+      return true;
+    }
+
+    // Check if the current path starts with the tab href (for nested routes)
+    if (pathname.startsWith(`${href}/`) || normalizedPathname.startsWith(`${normalizedHref}/`)) {
+      return true;
+    }
+
+    // Special case: if tab is /details and pathname matches the parent route exactly
+    // (e.g., /project/123 should highlight /project/123/details)
+    if (href.endsWith('/details')) {
+      const parentPath = href.substring(0, href.lastIndexOf('/'));
+      const normalizedParentPath = normalizePathForComparison(parentPath);
+
+      if (pathname === parentPath || normalizedPathname === normalizedParentPath) {
+        return true;
+      }
+    }
+
+    return false;
   }, [activeTab, location.pathname]);
 
   const computeLayout = useCallback(() => {

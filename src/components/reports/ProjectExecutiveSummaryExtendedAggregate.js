@@ -10,6 +10,9 @@ import { Tooltip as ReactTooltip } from 'react-tooltip';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import html2canvas from 'html2canvas';
 import projectsData from '../../data/projects.json';
 import contractsData from '../../data/contracts.json';
 import { generateAggregateReportData } from '../../services/generateAggregateReportData';
@@ -175,6 +178,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
   const allContractOptions = useMemo(() => createContractOptions(contractsData), []);
   const gridOptions = useMemo(() => ({ theme: 'legacy' }), []);
   const exportDropdownRef = useRef(null);
+  const chartRef = useRef(null);
   const chartRef = useRef(null);
 
   const [filters, setFilters] = useState({
@@ -1119,6 +1123,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
   };
 
   const handleExport = async (format) => {
+  const handleExport = async (format) => {
     setShowExportDropdown(false);
 
     if (format === 'PDF') {
@@ -1370,6 +1375,19 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
       .join(', ');
   }, [allContractOptions]);
 
+  const getContractNumbersSummary = useCallback((values) => {
+    if (!values || values.length === 0) {
+      return 'None';
+    }
+
+    return values
+      .map((value) => {
+        const contractOption = allContractOptions.find(opt => opt.value === value);
+        return contractOption ? contractOption.value : value;
+      })
+      .join(', ');
+  }, [allContractOptions]);
+
   // Custom styles for React Select
   const customSelectStyles = {
     control: (provided) => ({
@@ -1470,6 +1488,19 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#4a7c59', flexWrap: 'wrap' }}>
                       <span><strong>Client:</strong> {getLabel(clientOptions, appliedFilters.client, 'N/A')}</span>
                       <span style={{ color: '#ddd' }}>|</span>
+                      {(() => {
+                        const contractSummary = getContractNumbersSummary(appliedFilters.contracts);
+                        const hasMultipleContracts = appliedFilters.contracts.length > 1;
+                        return (
+                          <span
+                            style={{ cursor: hasMultipleContracts ? 'help' : 'default', borderBottom: hasMultipleContracts ? '1px dotted #4a7c59' : 'none' }}
+                            data-tooltip-id={hasMultipleContracts ? 'contracts-tooltip' : undefined}
+                            data-tooltip-content={hasMultipleContracts ? contractSummary : undefined}
+                          >
+                            <strong>Contracts:</strong> {contractSummary}
+                          </span>
+                        );
+                      })()}
                       {(() => {
                         const contractSummary = getContractNumbersSummary(appliedFilters.contracts);
                         const hasMultipleContracts = appliedFilters.contracts.length > 1;
@@ -1715,9 +1746,10 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                   Step 2: Select Projects {filters.projects.length > 0 && `(${filters.projects.length} selected)`}
                 </label>
                 <div style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
+                  display: isMobile ? 'flex' : 'grid',
+                  flexDirection: isMobile ? 'row' : undefined,
+                  flexWrap: isMobile ? 'wrap' : undefined,
+                  gridTemplateColumns: isMobile ? undefined : 'repeat(3, 1fr)',
                   gap: '10px',
                   maxHeight: 'calc(3 * 40px + 2 * 10px)',
                   overflowY: 'auto',
@@ -1780,9 +1812,10 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
                   Step 3: Select Contracts {filters.contracts.length > 0 && `(${filters.contracts.length} selected)`}
                 </label>
                 <div style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
+                  display: isMobile ? 'flex' : 'grid',
+                  flexDirection: isMobile ? 'row' : undefined,
+                  flexWrap: isMobile ? 'wrap' : undefined,
+                  gridTemplateColumns: isMobile ? undefined : 'repeat(3, 1fr)',
                   gap: '10px',
                   maxHeight: 'calc(3 * 40px + 2 * 10px)',
                   overflowY: 'auto',
@@ -1998,6 +2031,7 @@ const ProjectExecutiveSummaryExtendedAggregate = () => {
 
           {/* Business Spend Pie Chart Card */}
           <div
+            ref={chartRef}
             ref={chartRef}
             style={{
               background: 'rgba(255, 255, 255, 0.85)',
